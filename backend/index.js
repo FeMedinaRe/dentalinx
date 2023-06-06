@@ -1,9 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const app = express();
 const dotenv = require('dotenv');
+const app = express();
 dotenv.config();
+
+const pacienteRoutes = require('./routes/pacienteRoutes');
+
+
+app.use(cors());
+app.use(express.json());
+app.options('', cors());
+
+app.use('/api', pacienteRoutes);
 
 mongoose.connect('mongodb+srv://Juan:juan1234@dentalinx.sz8at8j.mongodb.net/')
   .then(() => {
@@ -16,6 +25,7 @@ mongoose.connect('mongodb+srv://Juan:juan1234@dentalinx.sz8at8j.mongodb.net/')
   });
 
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server started on port ${process.env.PORT}`);
+app.listen( 3000, () => {
+    console.log(`Inicia en puerto ${process.env.PORT}`);
 })
+
