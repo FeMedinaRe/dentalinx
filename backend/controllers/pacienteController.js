@@ -1,46 +1,71 @@
 const Paciente = require('../models/paciente');
 
+async function validarDatosPaciente(rut, nombre, direccion, edad, saldo) {
+
+  if (rut.length < 8 || rut.length > 12) {
+    throw new Error("El rut es incorrecto");
+  }
+
+  const regexRut = /^[\d.kK-]+$/;
+  if (!regexRut.test(rut)) {
+    throw new Error("El rut no puede contener letras");
+  }
+
+  const rutRegistrado = await Paciente.findOne({ rut: rut })
+  if (rutRegistrado) {
+    throw new Error("El rut ya fue ingresado");
+  }
+
+  const regex = /^[A-Za-z\s]+$/;
+
+  if (!regex.test(nombre)) {
+    throw new Error("El nombre debe contener solo letras");
+  }
+
+  if (nombre.length < 8) {
+    throw new Error("El nombre no contiene los suficientes caracteres");
+  }
+
+  if (edad < 0 || edad > 150) {
+    throw new Error("La edad es incorrecta");
+  }
+
+  if (saldo < 0) {
+    throw new Error("El saldo es incorrecto");
+  }
+
+}
+
+async function validarActualizacionDatos(nombre,edad,saldo){
+
+  const regex = /^[A-Za-z\s]+$/;
+
+  if (!regex.test(nombre)) {
+    throw new Error("El nombre debe contener solo letras");
+  }
+
+  if (nombre.length < 8) {
+    throw new Error("El nombre no contiene los suficientes caracteres");
+  }
+
+  if (edad < 0 || edad > 150) {
+    throw new Error("La edad es incorrecta");
+  }
+
+  if (saldo < 0) {
+    throw new Error("El saldo es incorrecto");
+  }
+
+}
+
 const createPaciente = async (req, res) => {
     try {
       const { rut, nombre, direccion, edad, saldo } = req.body;
 
-      const regex = /^[A-Za-z\s]+$/;
-
-      if (!regex.test(nombre)) {
-      return res.status(400).send({ message: "El nombre debe contener solo letras" });
-      }
-
-      if (nombre.length < 8 ){
-      return res.status(400).send({ message: "El nombre no contiene los suficientes caracteres" });
-      }
-
-      if (edad<0 || edad > 150){
-      return res.status(400).send({ message: "La edad es incorrecta" });
-      }
-
-      if (saldo < 0){
-      return res.status(400).send({ message: "El saldo es incorrecto" });
-      }
-
-      const regexRut = /^[\d.kK-]+$/;
-      if (!regexRut.test(rut)) {
-      return res.status(400).send({ message: "El rut no puede contener letras" });
-      }
-
-      if (rut.length < 8 || rut.length > 12){
-        return res.status(400).send({ message: "El rut es incorrecto" });
-      }
-
-      if (direccion.length < 8){
-        return res.status(400).send({ message: "La direccion no contiene los suficientes caracteres" });
-      }
-
-      if (await Paciente.exists({ rut: rut })) {
-        return res.status(400).send({ message: "El rut ya fue ingresado" });
-      }
+      await validarDatosPaciente(rut,nombre,direccion,edad,saldo)
 
       const newPaciente = new Paciente({
-        rut:rut,
+        rut,
         nombre,
         direccion,
         edad,
@@ -51,8 +76,9 @@ const createPaciente = async (req, res) => {
 
       return res.status(201).send(paciente);
     } catch (error) {
-      return res.status(400).send({ message: "No se registró el paciente" });
+      return res.status(400).send({ message: error.message });
     }
+
   };
 
 //modificar
@@ -88,20 +114,25 @@ const getPacientes = async (req, res) => {
 
 
   const updatePaciente = async (req, res) => {
+
     try {
       const { id } = req.params;
+
+      const { nombre, direccion, edad, saldo } = req.body;
+
+      await validarActualizacionDatos(nombre,edad,saldo)
+
       const paciente = await Paciente.findByIdAndUpdate(id, req.body, { new: true });
 
       if (!paciente) {
         return res.status(404).send({ message: "No se encontró el paciente" });
       }
 
-      return res.status(200).send(paciente);
+      return res.status(201).send(paciente);
     } catch (error) {
-      return res.status(400).send({ message: "No se actualizaron los datos del paciente" });
+      return res.status(400).send({ message: error.message });
     }
   };
-
 
   const deletePaciente = async (req, res) => {
 

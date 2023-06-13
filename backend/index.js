@@ -25,7 +25,7 @@ mongoose.connect('mongodb+srv://Juan:juan1234@dentalinx.sz8at8j.mongodb.net/')
   });
 
 
-app.listen( 3000, () => {
+app.listen( 3001, () => {
     console.log(`Inicia en puerto ${process.env.PORT}`);
 })
 
