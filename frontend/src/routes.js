@@ -31,6 +31,7 @@ import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 // core components/views for RTL layout
+
 const dashboardRoutes = [
   {
     path: "/dashboard",
@@ -50,7 +51,7 @@ const dashboardRoutes = [
   },
   {
     path: "/table",
-    name: "Listado Pacientes",
+    name: "Table List",
     rtlName: "قائمة الجدول",
     icon: "content_paste",
     component: TableList,

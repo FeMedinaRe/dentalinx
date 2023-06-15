@@ -45,6 +45,7 @@ export default function Admin({ ...rest }) {
   // ref to help us initialize PerfectScrollbar on windows devices
   const mainPanel = React.createRef();
   // states and functions
+
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -75,12 +76,11 @@ export default function Admin({ ...rest }) {
       window.removeEventListener("resize", resizeFunction);
     };
   }, [mainPanel]);
-
   return (
     <div className={classes.wrapper}>
       <Sidebar
         routes={routes}
-        logoText={"Dentalinx"}
+        logoText={"Creative Tim"}
         logo={logo}
         image={bgImage}
         handleDrawerToggle={handleDrawerToggle}
@@ -107,5 +107,3 @@ export default function Admin({ ...rest }) {
     </div>
   );
 }
-
-//eliminarFIXEDPLUGIN
