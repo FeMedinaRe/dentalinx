@@ -17,7 +17,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import {
   flexRender,
   getCoreRowModel,
@@ -27,6 +29,7 @@ import {
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import { Button } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
@@ -110,7 +113,14 @@ export default function TableList() {
       accessorKey: "saldo",
       header: () => <span>Saldo</span>,
     },
+    {
+      accessorKey: "direccion",
+      header: () => <span>Direccion</span>,
+    },
   ];
+
+  const [openEliminar, setOpenEliminar] = useState(false);
+  const [openEditar, setOpenEditar] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,15 +149,57 @@ export default function TableList() {
 
   const classes = useStyles();
 
+  const [pacienteEdit, setPacienteEdit] = useState({
+    rut: "",
+    nombre: "",
+    edad: "",
+    direccion: "",
+    saldo: "",
+  });
+
+  const onCambio = (e) => {
+    setPacienteEdit({
+      ...pacienteEdit,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const dialogEditar = (event, row) => {
+    setPacienteEdit({
+      _id: row.original._id,
+      rut: row.original.rut,
+      nombre: row.original.nombre,
+      edad: row.original.edad,
+      direccion: row.original.direccion,
+      saldo: row.original.saldo,
+    });
+  };
+
   const handleDeleteRow = async (event, rowID) => {
     console.log(rowID.original._id);
     try {
-      const response = await axios.delete(
+      axios.delete(
         `http://localhost:3001/api/deletePaciente/${rowID.original._id}`
       );
       window.location.reload();
-    } catch (error) {
-      console.error(error);
+    } catch (error) {}
+  };
+
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (event, rowID) => {
+    console.log(rowID.original._id);
+    try {
+      const response = await axios.put(
+        `http://localhost:3001/api/paciente/${rowID.original._id}`,
+        pacienteEdit
+      );
+      setOpenEditar(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } catch (err) {
+      setError("Ocurrió un error al actualizar los datos del paciente.");
     }
   };
 
@@ -156,7 +208,8 @@ export default function TableList() {
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}>Pacientes</h4>
+            <h4 className={classes.cardTitleWhite}> Pacientes</h4>
+            <div> Total de Pacientes: {tableData.length} </div>
           </CardHeader>
           <CardBody>
             <div className={classes.inputContainer}>
@@ -201,13 +254,132 @@ export default function TableList() {
                     <TableCell className={classes.buttonContainer}>
                       <Button
                         color="secondary"
-                        onClick={(event) => handleDeleteRow(event, row)}
+                        onClick={() => setOpenEliminar(true)}
                       >
                         <DeleteIcon />
                       </Button>
-                      <Button color="primary">
+                      <Dialog
+                        open={openEliminar}
+                        onClose={() => setOpenEliminar(true)}
+                      >
+                        <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
+                        <DialogContent>
+                          <Typography variant="body1">
+                            Esta acción eliminará permanentemente los datos.
+                          </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={() => setOpenEliminar(false)}
+                            color="secondary"
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            color="primary"
+                            style={{ color: "white", backgroundColor: "red" }}
+                            onClick={(event) => handleDeleteRow(event, row)}
+                          >
+                            Eliminar
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                      <Button
+                        color="primary"
+                        onClick={(event) => {
+                          dialogEditar(event, row);
+                          setOpenEditar(true);
+                        }}
+                      >
                         <EditIcon />
                       </Button>
+                      <Dialog
+                        open={openEditar}
+                        onClose={() => setOpenEditar(true)}
+                      >
+                        <DialogTitle>Editar Paciente</DialogTitle>
+                        <DialogContent>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                              <TextField
+                                autoFocus
+                                fullWidth
+                                label="Nombre"
+                                name="nombre"
+                                variant="outlined"
+                                defaultValue={pacienteEdit.nombre}
+                                InputProps={{
+                                  readOnly: true,
+                                }}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TextField
+                                fullWidth
+                                label="Rut"
+                                name="rut"
+                                variant="outlined"
+                                defaultValue={pacienteEdit.rut}
+                                InputProps={{
+                                  readOnly: true,
+                                }}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TextField
+                                fullWidth
+                                label="Edad"
+                                name="edad"
+                                variant="outlined"
+                                defaultValue={pacienteEdit.edad}
+                                onChange={onCambio}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TextField
+                                fullWidth
+                                label="Dirección"
+                                name="direccion"
+                                variant="outlined"
+                                defaultValue={pacienteEdit.direccion}
+                                onChange={onCambio}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TextField
+                                fullWidth
+                                label="Saldo"
+                                name="saldo"
+                                variant="outlined"
+                                defaultValue={pacienteEdit.saldo}
+                                onChange={onCambio}
+                              />
+                            </Grid>
+                          </Grid>
+                          {error && (
+                            <DialogContentText color="error">
+                              {error}
+                            </DialogContentText>
+                          )}
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={() => {
+                              setOpenEditar(false);
+                              setError(null);
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={(event) => handleSubmit(event, row)}
+                          >
+                            Guardar
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -42,7 +42,7 @@ const dashboardRoutes = [
   },
   {
     path: "/user",
-    name: "User Profile",
+    name: "Registrar Pacientes",
     icon: Person,
     component: UserProfile,
     layout: "/admin",

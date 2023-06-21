@@ -1,6 +1,13 @@
 const Paciente = require("../models/paciente");
 
-async function validarDatosPaciente(rut, nombre, direccion, edad, saldo) {
+async function validarDatosPaciente(
+  rut,
+  nombre,
+  direccion,
+  edad,
+  saldo,
+  correo
+) {
   if (rut.length < 8 || rut.length > 12) {
     throw new Error("El rut es incorrecto");
   }
@@ -25,40 +32,43 @@ async function validarDatosPaciente(rut, nombre, direccion, edad, saldo) {
     throw new Error("El nombre no contiene los suficientes caracteres");
   }
 
+  if (direccion.length < 8) {
+    throw new Error("La direccion no contiene los suficientes caracteres");
+  }
+
   if (edad < 0 || edad > 150) {
     throw new Error("La edad es incorrecta");
   }
 
   if (saldo < 0) {
     throw new Error("El saldo es incorrecto");
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(correo)) {
+    throw new Error("El formato del correo es incorrecto");
   }
 }
 
-async function validarActualizacionDatos(nombre, edad, saldo) {
-  const regex = /^[A-Za-z\s]+$/;
-
-  if (!regex.test(nombre)) {
-    throw new Error("El nombre debe contener solo letras");
-  }
-
-  if (nombre.length < 8) {
-    throw new Error("El nombre no contiene los suficientes caracteres");
-  }
-
+async function validarActualizacionDatos(edad, saldo, direccion) {
   if (edad < 0 || edad > 150) {
     throw new Error("La edad es incorrecta");
   }
 
   if (saldo < 0) {
     throw new Error("El saldo es incorrecto");
+  }
+  if (direccion.length < 8) {
+    throw new Error("La direccion no contiene los suficientes caracteres");
   }
 }
 
 const createPaciente = async (req, res) => {
   try {
-    const { rut, nombre, direccion, edad, saldo } = req.body;
+    const { rut, nombre, direccion, edad, saldo, correo, sexo } = req.body;
 
-    await validarDatosPaciente(rut, nombre, direccion, edad, saldo);
+    await validarDatosPaciente(rut, nombre, direccion, edad, saldo, correo);
 
     const newPaciente = new Paciente({
       rut,
@@ -66,6 +76,8 @@ const createPaciente = async (req, res) => {
       direccion,
       edad,
       saldo,
+      correo,
+      sexo,
     });
 
     const paciente = await newPaciente.save();
@@ -96,9 +108,9 @@ const updatePaciente = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { nombre, direccion, edad, saldo } = req.body;
+    const { direccion, edad, saldo } = req.body;
 
-    await validarActualizacionDatos(nombre, edad, saldo);
+    await validarActualizacionDatos(edad, saldo, direccion);
 
     const paciente = await Paciente.findByIdAndUpdate(id, req.body, {
       new: true,

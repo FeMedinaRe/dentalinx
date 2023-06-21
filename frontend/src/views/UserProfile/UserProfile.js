@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -12,8 +12,18 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
-
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
 import avatar from "assets/img/faces/marc.jpg";
+import axios from "axios";
+import Box from "@material-ui/core/Box";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
+import { TextFields } from "@material-ui/icons";
 
 const styles = {
   cardCategoryWhite: {
@@ -37,6 +47,59 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 export default function UserProfile() {
+  const [values, setValues] = useState({
+    nombre: "",
+    rut: "",
+    direccion: "",
+    edad: "",
+    saldo: "",
+    correo: "",
+    sexo: "",
+  });
+
+  const updateSelect = (e) => {
+    values.sexo = e.target.value;
+  };
+
+  const onChange = (e) => {
+    e.preventDefault();
+    setValues({
+      ...values,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log(values);
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/api/paciente",
+        values
+      );
+
+      if (response.status === 201) {
+        Swal.fire({
+          title: "Paciente Guardado",
+          text: "El paciente ha sido guardado exitosamente",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2500);
+      }
+    } catch (err) {
+      Swal.fire({
+        title: "Error al Guardar",
+        text: "Hubo un error al guardar al paciente.Inténtalo nuevamente",
+        icon: "error",
+        confirmButtonText: "Aceptar",
+      });
+    }
+  };
+
   const classes = useStyles();
   return (
     <div>
@@ -44,110 +107,81 @@ export default function UserProfile() {
         <GridItem xs={12} sm={12} md={8}>
           <Card>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
-              <p className={classes.cardCategoryWhite}>Complete your profile</p>
+              <h4 className={classes.cardTitleWhite}>Registar Paciente</h4>
             </CardHeader>
             <CardBody>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={5}>
-                  <CustomInput
-                    labelText="Company (disabled)"
-                    id="company-disabled"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      disabled: true,
-                    }}
+              <Box display="flex" height="100%" marginTop={3}>
+                <GridItem item xs={12} sm={6} md={4}>
+                  <TextField
+                    label="Nombre Completo"
+                    id="nombre"
+                    type="text"
+                    fullWidth
+                    onChange={onChange}
+                  />
+                </GridItem>
+                <GridItem item xs={12} sm={6} md={4}>
+                  <TextField
+                    label="Rut"
+                    id="rut"
+                    type="text"
+                    onChange={onChange}
+                    fullWidth
+                  />
+                </GridItem>
+              </Box>
+              <Box display="flex" height="100%" marginTop={3}>
+                <GridItem xs={12} sm={12} md={3}>
+                  <TextField
+                    label="Direccion"
+                    id="direccion"
+                    onChange={onChange}
+                    fullWidth
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
-                  <CustomInput
-                    labelText="Username"
-                    id="username"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
+                  <TextField
+                    label="Edad"
+                    id="edad"
+                    type="number"
+                    onChange={onChange}
+                    fullWidth
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={3}>
+                  <TextField
+                    label="Saldo"
+                    id="saldo"
+                    type="number"
+                    onChange={onChange}
+                    fullWidth
+                  />
+                </GridItem>
+              </Box>
+              <Box display="flex" height="100%" marginTop={3}>
+                <GridItem xs={12} sm={12} md={4}>
+                  <TextField
+                    label="Correo"
+                    id="correo"
+                    type="text"
+                    onChange={onChange}
+                    fullWidth
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Email address"
-                    id="email-address"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                  />
+                  <InputLabel>Sexo</InputLabel>
+                  <Select label="Sexo" onChange={updateSelect}>
+                    <MenuItem value="Masculino">Masculino</MenuItem>
+                    <MenuItem value="Femenino">Femenino</MenuItem>
+                    <MenuItem value="Otro">Otro</MenuItem>
+                  </Select>
                 </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="First Name"
-                    id="first-name"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Last Name"
-                    id="last-name"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="City"
-                    id="city"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Country"
-                    id="country"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Postal Code"
-                    id="postal-code"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                  <InputLabel style={{ color: "#AAAAAA" }}>About me</InputLabel>
-                  <CustomInput
-                    labelText="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                    id="about-me"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      multiline: true,
-                      rows: 5,
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
+              </Box>
             </CardBody>
             <CardFooter>
-              <Button color="primary">Update Profile</Button>
+              <Button color="primary" onClick={handleSubmit}>
+                Guardar
+              </Button>
             </CardFooter>
           </Card>
         </GridItem>
