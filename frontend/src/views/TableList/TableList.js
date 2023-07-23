@@ -150,8 +150,6 @@ export default function TableList() {
   const classes = useStyles();
 
   const [pacienteEdit, setPacienteEdit] = useState({
-    rut: "",
-    nombre: "",
     edad: "",
     direccion: "",
     saldo: "",
@@ -164,7 +162,8 @@ export default function TableList() {
     });
   };
 
-  const dialogEditar = (event, row) => {
+  const dialogEditarEliminar = (event, row) => {
+    console.log(row.original.nombre);
     setPacienteEdit({
       _id: row.original._id,
       rut: row.original.rut,
@@ -175,25 +174,28 @@ export default function TableList() {
     });
   };
 
-  const handleDeleteRow = async (event, rowID) => {
-    console.log(rowID.original._id);
+  const handleDeleteRow = async () => {
     try {
       axios.delete(
-        `http://localhost:3001/api/deletePaciente/${rowID.original._id}`
+        `http://localhost:3001/api/deletePaciente/${pacienteEdit._id}`
       );
       window.location.reload();
-    } catch (error) {}
+    } catch (error) {
+      setError("Ocurrió un error al eliminar al paciente.");
+    }
   };
 
   const [error, setError] = useState(null);
 
-  const handleSubmit = async (event, rowID) => {
-    console.log(rowID.original._id);
+  const handleSubmit = async (event, row) => {
+    console.log(pacienteEdit);
     try {
       const response = await axios.put(
-        `http://localhost:3001/api/paciente/${rowID.original._id}`,
+        `http://localhost:3001/api/paciente/${pacienteEdit._id}`,
         pacienteEdit
       );
+
+      console.log(response.data);
       setOpenEditar(false);
       setTimeout(() => {
         window.location.reload();
@@ -254,7 +256,10 @@ export default function TableList() {
                     <TableCell className={classes.buttonContainer}>
                       <Button
                         color="secondary"
-                        onClick={() => setOpenEliminar(true)}
+                        onClick={(event) => {
+                          dialogEditarEliminar(event, row);
+                          setOpenEliminar(true);
+                        }}
                       >
                         <DeleteIcon />
                       </Button>
@@ -270,7 +275,9 @@ export default function TableList() {
                         </DialogContent>
                         <DialogActions>
                           <Button
-                            onClick={() => setOpenEliminar(false)}
+                            onClick={() => {
+                              setOpenEliminar(false);
+                            }}
                             color="secondary"
                           >
                             Cancelar
@@ -278,7 +285,7 @@ export default function TableList() {
                           <Button
                             color="primary"
                             style={{ color: "white", backgroundColor: "red" }}
-                            onClick={(event) => handleDeleteRow(event, row)}
+                            onClick={() => handleDeleteRow()}
                           >
                             Eliminar
                           </Button>
@@ -287,7 +294,7 @@ export default function TableList() {
                       <Button
                         color="primary"
                         onClick={(event) => {
-                          dialogEditar(event, row);
+                          dialogEditarEliminar(event, row);
                           setOpenEditar(true);
                         }}
                       >
@@ -374,7 +381,9 @@ export default function TableList() {
                           <Button
                             color="primary"
                             variant="contained"
-                            onClick={(event) => handleSubmit(event, row)}
+                            onClick={(event) => {
+                              handleSubmit(event, row);
+                            }}
                           >
                             Guardar
                           </Button>

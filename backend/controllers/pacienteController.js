@@ -53,13 +53,16 @@ async function validarDatosPaciente(
 
 async function validarActualizacionDatos(edad, saldo, direccion) {
   if (edad < 0 || edad > 150) {
+    console.log("error edad");
     throw new Error("La edad es incorrecta");
   }
 
   if (saldo < 0) {
+    console.log("error saldo");
     throw new Error("El saldo es incorrecto");
   }
   if (direccion.length < 8) {
+    console.log("error direccion");
     throw new Error("La direccion no contiene los suficientes caracteres");
   }
 }
