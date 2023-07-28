@@ -69,7 +69,16 @@ async function validarActualizacionDatos(edad, saldo, direccion) {
 
 const createPaciente = async (req, res) => {
   try {
-    const { rut, nombre, direccion, edad, saldo, correo, sexo } = req.body;
+    const {
+      rut,
+      nombre,
+      direccion,
+      edad,
+      saldo,
+      correo,
+      fechaNacimiento,
+      sexo,
+    } = req.body;
 
     await validarDatosPaciente(rut, nombre, direccion, edad, saldo, correo);
 
@@ -80,6 +89,7 @@ const createPaciente = async (req, res) => {
       edad,
       saldo,
       correo,
+      fechaNacimiento,
       sexo,
     });
 
