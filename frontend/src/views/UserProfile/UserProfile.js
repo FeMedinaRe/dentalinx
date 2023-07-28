@@ -24,6 +24,9 @@ import Box from "@material-ui/core/Box";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import { TextFields } from "@material-ui/icons";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
 
 const styles = {
   cardCategoryWhite: {
@@ -54,8 +57,28 @@ export default function UserProfile() {
     edad: "",
     saldo: "",
     correo: "",
+    fechaNacimiento: null,
     sexo: "",
   });
+
+  const [fechaNacimiento, setFechaNacimiento] = useState(null);
+
+  const handleFechaNacimientoChange = (fechaNacimiento) => {
+    setFechaNacimiento(fechaNacimiento); // Almacenamos la fecha como objeto Date
+    console.log(fechaNacimiento);
+  };
+
+  const calcularEdad = (fechaNacimiento) => {
+    if (!fechaNacimiento) return 0; // Si no hay fecha de nacimiento, la edad será 0
+
+    const birthdateTimestamp = new Date(fechaNacimiento).getTime();
+    const nowTimestamp = Date.now();
+    const ageMilliseconds = nowTimestamp - birthdateTimestamp;
+    const ageDate = new Date(ageMilliseconds);
+    const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+
+    return calculatedAge;
+  };
 
   const updateSelect = (e) => {
     values.sexo = e.target.value;
@@ -63,41 +86,37 @@ export default function UserProfile() {
 
   const onChange = (e) => {
     e.preventDefault();
+
     setValues({
       ...values,
       [e.target.id]: e.target.value,
+      fechaNacimiento: fechaNacimiento,
+      edad: calcularEdad(fechaNacimiento),
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    values.fechaNacimiento = format(fechaNacimiento, "dd-MM-yyyy");
     console.log(values);
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/api/paciente",
-        values
-      );
 
-      if (response.status === 201) {
-        Swal.fire({
-          title: "Paciente Guardado",
-          text: "El paciente ha sido guardado exitosamente",
-          icon: "success",
-          confirmButtonText: "Aceptar",
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
-      }
-    } catch (err) {
+    const response = await axios.post(
+      "http://localhost:3001/api/paciente",
+      values
+    );
+
+    if (response.status === 201) {
       Swal.fire({
-        title: "Error al Guardar",
-        text: "Hubo un error al guardar al paciente.Inténtalo nuevamente",
-        icon: "error",
+        title: "Paciente Guardado",
+        text: "El paciente ha sido guardado exitosamente",
+        icon: "success",
         confirmButtonText: "Aceptar",
       });
     }
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const classes = useStyles();
@@ -141,20 +160,21 @@ export default function UserProfile() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
                   <TextField
-                    label="Edad"
-                    id="edad"
+                    label="Saldo"
+                    id="saldo"
                     type="number"
                     onChange={onChange}
                     fullWidth
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Saldo"
-                    id="saldo"
-                    type="number"
-                    onChange={onChange}
-                    fullWidth
+                  <DatePicker
+                    label="Fecha de nacimiento"
+                    selected={fechaNacimiento}
+                    value={fechaNacimiento}
+                    onChange={handleFechaNacimientoChange}
+                    maxDate={new Date()}
+                    minDate={new Date(1880, 0, 1)}
                   />
                 </GridItem>
               </Box>

@@ -145,6 +145,7 @@ export default function TableList() {
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: filtro,
+    pagination: true,
   });
 
   const classes = useStyles();
@@ -187,22 +188,31 @@ export default function TableList() {
 
   const [error, setError] = useState(null);
 
-  const handleSubmit = async (event, row) => {
+  const handleSubmit = async () => {
     console.log(pacienteEdit);
-    try {
-      const response = await axios.put(
-        `http://localhost:3001/api/paciente/${pacienteEdit._id}`,
-        pacienteEdit
-      );
 
-      console.log(response.data);
-      setOpenEditar(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    } catch (err) {
-      setError("Ocurrió un error al actualizar los datos del paciente.");
+    if (pacienteEdit.saldo < 0) {
+      setError("El saldo es incorrecto");
     }
+
+    if (pacienteEdit.direccion.length < 8) {
+      setError("La direccion no contiene los suficientes caracteres");
+    }
+
+    if (pacienteEdit.edad < 0 || pacienteEdit.edad > 150) {
+      setError("La edad es incorrecta");
+    }
+
+    const response = await axios.put(
+      `http://localhost:3001/api/paciente/${pacienteEdit._id}`,
+      pacienteEdit
+    );
+
+    console.log(response.data);
+    setOpenEditar(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   };
 
   return (
@@ -338,6 +348,7 @@ export default function TableList() {
                                 label="Edad"
                                 name="edad"
                                 variant="outlined"
+                                type="number"
                                 defaultValue={pacienteEdit.edad}
                                 onChange={onCambio}
                               />
@@ -357,6 +368,7 @@ export default function TableList() {
                                 fullWidth
                                 label="Saldo"
                                 name="saldo"
+                                type="number"
                                 variant="outlined"
                                 defaultValue={pacienteEdit.saldo}
                                 onChange={onCambio}
