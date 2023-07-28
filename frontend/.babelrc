@@ -1,0 +1,29 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions", "not dead", "not < 2%"]
+        },
+        "modules": false
+      }
+    ],
+    "transform-react-jsx",
+    "transform-class-properties",
+    "transform-object-rest-spread",
+    [
+      "module-resolver",
+      {
+        "root": ["./src"]
+      }
+    ],
+    [
+      "import-rename",
+      {
+        "regex": "^(.*)\\.jsx$",
+        "replace": "$1"
+      }
+    ]
+  ]
+}
