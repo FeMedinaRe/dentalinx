@@ -30,6 +30,7 @@ import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
+import registrarTratamiento from "views/registrarTratamiento/registrarTratamiento.js";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -45,6 +46,13 @@ const dashboardRoutes = [
     name: "Registrar Pacientes",
     icon: Person,
     component: UserProfile,
+    layout: "/admin",
+  },
+  {
+    path: "/registrarTratamiento",
+    name: "Registrar Tratamientos",
+    icon: "content_paste",
+    component: registrarTratamiento,
     layout: "/admin",
   },
   {
