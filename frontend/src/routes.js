@@ -26,6 +26,7 @@ import Notifications from "@material-ui/icons/Notifications";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
+import Inventario from "views/Inventario/Inventario.js";  // INVENTARIO
 import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
@@ -52,6 +53,13 @@ const dashboardRoutes = [
     name: "Listado Pacientes",
     icon: "content_paste",
     component: TableList,
+    layout: "/admin",
+  },
+  {
+    path: "/inventario",
+    name: "Inventario",
+    icon: "content_paste",
+    component: Inventario,
     layout: "/admin",
   },
   {
