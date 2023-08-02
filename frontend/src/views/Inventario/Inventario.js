@@ -24,7 +24,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
@@ -34,7 +33,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
-import { resolveTypeReferenceDirective } from "typescript";
+import TablePagination from "@material-ui/core/TablePagination";
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -90,6 +89,8 @@ const filtro = (row, columnId, value, addMeta) => {
 export default function TableList() {
   const [tableData, setTableData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(5); // Puedes ajustar el tamaño de página según tu preferencia (por ejemplo, 5, 20, etc.).
 
   const columns = [
     {
@@ -136,7 +137,6 @@ export default function TableList() {
         const response = await api.get();
 
         setTableData(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -144,15 +144,12 @@ export default function TableList() {
     fetchData();
   }, []);
 
-  const pageSize = 36;
   const table = useReactTable({
     data: tableData,
     columns,
-    state: { globalFilter },
+    state: { globalFilter, pageIndex: currentPage, pageSize },
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: filtro,
   });
 
   const classes = useStyles();
@@ -179,7 +176,7 @@ export default function TableList() {
   const Create = async () => {
     try {
       const response = await api.post(`/`, inventario);
-      setOpen(false);
+      setOpenCreate(false);
       setTimeout(() => {
         window.location.reload();
       });
@@ -191,7 +188,7 @@ export default function TableList() {
   const Delete = async () => {
     try {
       const response = await api.delete(`/${inventario._id}`);
-      setOpen(false);
+      setOpenDelete(false);
       setTimeout(() => {
         window.location.reload();
       });
@@ -204,7 +201,7 @@ export default function TableList() {
     try {
       alert(action);
       const response = await api.put(`Action/${action}`, inventario);
-      setOpen(false);
+      setOpenUpdate(false);
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -220,7 +217,7 @@ export default function TableList() {
         `http://localhost:3001/api/inventario/${inventario._id}`,
         inventario
       );
-      setOpen(false);
+      setOpenUpdate(false);
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -228,7 +225,6 @@ export default function TableList() {
       setError("Ocurrió un error al actualizar los datos del paciente.");
     }
   };
-  const handleRowClick = async () => {};
 
   return (
     <GridContainer>
@@ -395,7 +391,19 @@ export default function TableList() {
                 className={classes.input}
               />
             </div>
-
+            {/* Agrega los botones de paginación */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]} // Opciones para el tamaño de página
+              component="div"
+              count={tableData.length} // Total de filas
+              rowsPerPage={pageSize} // Tamaño de página actual
+              page={currentPage} // Página actual
+              onChangePage={(e, newPage) => setCurrentPage(newPage)} // Función para cambiar de página
+              onChangeRowsPerPage={(e) => {
+                setPageSize(parseInt(e.target.value, 10)); // Función para cambiar el tamaño de página
+                setCurrentPage(0); // Volver a la página 0 cuando se cambia el tamaño de página
+              }}
+            />
             <Table>
               <TableHead>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -415,131 +423,137 @@ export default function TableList() {
                 ))}
               </TableHead>
               <TableBody>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} onClick={() => handleRowClick(row)}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                    <TableCell className={classes.buttonContainer}>
-                      <Button
-                        color="secondary"
-                        onClick={() => {
-                          dialog(row);
-                          setOpenDelete(true);
-                        }}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                      <Dialog
-                        open={openDelete}
-                        onClose={() => setOpenDelete(true)}
-                      >
-                        <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
-                        <DialogContent>
-                          <Typography variant="body1">
-                            {" "}
-                            Esta acción eliminará permanentemente los datos.{" "}
-                          </Typography>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={() => setOpenDelete(false)}
-                            color="secondary"
-                          >
-                            Cancelar
-                          </Button>
-                          <Button
-                            color="primary"
-                            style={{ color: "white", backgroundColor: "red" }}
-                            onClick={() => Delete()}
-                          >
-                            {" "}
-                            Eliminar{" "}
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                      <Button
-                        color="primary"
-                        onClick={() => {
-                          dialog(row);
-                          setOpenUpdate(true);
-                        }}
-                      >
-                        <EditIcon />
-                      </Button>
-                      <Dialog
-                        open={openUpdate}
-                        onClose={() => setOpenUpdate(true)}
-                      >
-                        <DialogTitle>Actualizar Inventario</DialogTitle>
-                        <DialogContent>
-                          <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                              <TextField
-                                autoFocus
-                                fullWidth
-                                label="Producto"
-                                name="nombre"
-                                variant="outlined"
-                                defaultValue={inventario.nombre}
-                                onChange={change}
-                              />
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                autoFocus
-                                fullWidth
-                                label="Categoria"
-                                name="categoria"
-                                variant="outlined"
-                                defaultValue={inventario.categoria}
-                                onChange={change}
-                              />
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                fullWidth
-                                label="Cantidad"
-                                name="cantidad"
-                                variant="outlined"
-                                defaultValue={inventario.cantidad}
-                                onChange={change}
-                              />
-                            </Grid>
-                          </Grid>{" "}
-                          {error && (
-                            <DialogContentText color="error">
-                              {" "}
-                              {error}{" "}
-                            </DialogContentText>
+                {table
+                  .getRowModel()
+                  .rows.slice(
+                    currentPage * pageSize,
+                    (currentPage + 1) * pageSize
+                  )
+                  .map((row) => (
+                    <TableRow key={row.id} onClick={() => handleRowClick(row)}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
                           )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={() => {
-                              setOpenUpdate(false);
-                              setError(null);
-                            }}
-                          >
-                            Cancelar
-                          </Button>
-                          <Button
-                            color="primary"
-                            variant="contained"
-                            onClick={() => Submit()}
-                          >
-                            Guardar
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        </TableCell>
+                      ))}
+                      <TableCell className={classes.buttonContainer}>
+                        <Button
+                          color="secondary"
+                          onClick={() => {
+                            dialog(row);
+                            setOpenDelete(true);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                        <Dialog
+                          open={openDelete}
+                          onClose={() => setOpenDelete(true)}
+                        >
+                          <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
+                          <DialogContent>
+                            <Typography variant="body1">
+                              {" "}
+                              Esta acción eliminará permanentemente los datos.{" "}
+                            </Typography>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              onClick={() => setOpenDelete(false)}
+                              color="secondary"
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              color="primary"
+                              style={{ color: "white", backgroundColor: "red" }}
+                              onClick={() => Delete()}
+                            >
+                              {" "}
+                              Eliminar{" "}
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                        <Button
+                          color="primary"
+                          onClick={() => {
+                            dialog(row);
+                            setOpenUpdate(true);
+                          }}
+                        >
+                          <EditIcon />
+                        </Button>
+                        <Dialog
+                          open={openUpdate}
+                          onClose={() => setOpenUpdate(true)}
+                        >
+                          <DialogTitle>Actualizar Inventario</DialogTitle>
+                          <DialogContent>
+                            <Grid container spacing={2}>
+                              <Grid item xs={12}>
+                                <TextField
+                                  autoFocus
+                                  fullWidth
+                                  label="Producto"
+                                  name="nombre"
+                                  variant="outlined"
+                                  defaultValue={inventario.nombre}
+                                  onChange={change}
+                                />
+                              </Grid>
+                              <Grid item xs={12}>
+                                <TextField
+                                  autoFocus
+                                  fullWidth
+                                  label="Categoria"
+                                  name="categoria"
+                                  variant="outlined"
+                                  defaultValue={inventario.categoria}
+                                  onChange={change}
+                                />
+                              </Grid>
+                              <Grid item xs={12}>
+                                <TextField
+                                  fullWidth
+                                  label="Cantidad"
+                                  name="cantidad"
+                                  variant="outlined"
+                                  defaultValue={inventario.cantidad}
+                                  onChange={change}
+                                />
+                              </Grid>
+                            </Grid>{" "}
+                            {error && (
+                              <DialogContentText color="error">
+                                {" "}
+                                {error}{" "}
+                              </DialogContentText>
+                            )}
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              onClick={() => {
+                                setOpenUpdate(false);
+                                setError(null);
+                              }}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              color="primary"
+                              variant="contained"
+                              onClick={() => Submit()}
+                            >
+                              Guardar
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </CardBody>
