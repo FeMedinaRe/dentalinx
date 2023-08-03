@@ -160,6 +160,41 @@ export default function TableList() {
     cantidad: "",
   });
 
+  // Expresiones regulares para validar letras y números
+  const alphaRegex = /^[a-zA-Z]*$/;
+  const numericRegex = /^[0-9]*$/;
+  const alphanumericErrorMessage = "Solo se permiten letras y números.";
+  const alphaErrorMessage = "Solo se permiten letras.";
+  const numericErrorMessage = "Solo se permiten números.";
+
+  // Función para validar los campos antes de cambiar el estado
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if ((name = "nombre" || name == "categoria")) {
+      if (!alphaRegex.test(value)) {
+        // Validación para permitir solo letras y números
+        // Muestra el mensaje de error
+        setError(`${name}: ${alphaErrorMessage}`);
+      } else {
+        // Si el valor cumple con las validaciones, actualiza el estado
+        setInventario({ ...inventario, [name]: value });
+        setError(null); // Limpia el mensaje de error
+      }
+    }
+    if ((name = "cantidad")) {
+      if (!numericRegex.test(value)) {
+        // Validación para permitir solo letras y números
+        // Muestra el mensaje de error
+        setError(`${name}: ${numericErrorMessage}`);
+      } else {
+        // Si el valor cumple con las validaciones, actualiza el estado
+        setInventario({ ...inventario, [name]: value });
+        setError(null); // Limpia el mensaje de error
+      }
+    }
+  };
+
   const change = (e) => {
     setInventario({ ...inventario, [e.target.name]: e.target.value });
   };
@@ -226,6 +261,13 @@ export default function TableList() {
     }
   };
 
+  const totalPagesWithFivePerPage = Math.ceil(tableData.length / 5);
+  // Crear un array de opciones de tamaño de página con múltiplos de 5 hasta llegar a la cantidad total de filas
+  const availablePageSizes = Array.from(
+    { length: totalPagesWithFivePerPage },
+    (_, index) => (index + 1) * 5
+  ).filter((size) => size <= tableData.length);
+
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
@@ -236,6 +278,103 @@ export default function TableList() {
           </CardHeader>
           <CardBody>
             <div className={classes.inputContainer}>
+              {/* dialogo eliminar */}
+              <Dialog open={openDelete} onClose={() => setOpenDelete(true)}>
+                <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
+                <DialogContent>
+                  <Typography variant="body1">
+                    {" "}
+                    Esta acción eliminará permanentemente los datos.{" "}
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => setOpenDelete(false)}
+                    color="secondary"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    color="primary"
+                    style={{ color: "white", backgroundColor: "red" }}
+                    onClick={() => Delete()}
+                  >
+                    {" "}
+                    Eliminar{" "}
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              <Dialog open={openUpdate} onClose={() => setOpenUpdate(true)}>
+                <DialogTitle>Actualizar Inventario</DialogTitle>
+                <DialogContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        autoFocus
+                        fullWidth
+                        label="Producto"
+                        name="nombre"
+                        variant="outlined"
+                        defaultValue={inventario.nombre}
+                        onChange={handleChange}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Categoria"
+                        name="categoria"
+                        variant="outlined"
+                        defaultValue={inventario.categoria}
+                        onChange={handleChange}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Cantidad"
+                        name="cantidad"
+                        variant="outlined"
+                        defaultValue={inventario.cantidad}
+                        onChange={handleChange}
+                        inputProps={{
+                          pattern: "[0-9]*",
+                        }}
+                      />
+                    </Grid>
+                  </Grid>{" "}
+                  {error && (
+                    <DialogContentText color="error">
+                      {" "}
+                      {error}{" "}
+                    </DialogContentText>
+                  )}
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => {
+                      setOpenUpdate(false);
+                      setError(null);
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => Submit()}
+                  >
+                    Guardar
+                  </Button>
+                </DialogActions>
+              </Dialog>
               <Button
                 color="primary"
                 onClick={() => {
@@ -244,6 +383,8 @@ export default function TableList() {
               >
                 <Remove />
               </Button>
+
+              {/* DIALOGO QUITAR */}
               <Dialog open={openRemove} onClose={() => setOpenRemove(true)}>
                 <DialogTitle style={{ textAlign: "center" }}>
                   {" "}
@@ -259,18 +400,23 @@ export default function TableList() {
                         name="nombre"
                         variant="outlined"
                         defaultValue=""
-                        onChange={change}
+                        onChange={handleChange}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
-                        autoFocus
                         fullWidth
                         label="Categoria"
                         name="categoria"
                         variant="outlined"
                         defaultValue=""
-                        onChange={change}
+                        onChange={handleChange}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -280,7 +426,10 @@ export default function TableList() {
                         name="cantidad"
                         variant="outlined"
                         defaultValue=""
-                        onChange={change}
+                        onChange={handleChange}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                        }}
                       />
                     </Grid>
                   </Grid>{" "}
@@ -318,6 +467,8 @@ export default function TableList() {
               >
                 <Add />
               </Button>
+
+              {/* DIALOGO AÑADIR */}
               <Dialog open={openCreate} onClose={() => setOpenCreate(true)}>
                 <DialogTitle style={{ textAlign: "center" }}>
                   {" "}
@@ -333,12 +484,11 @@ export default function TableList() {
                         name="nombre"
                         variant="outlined"
                         defaultValue=""
-                        onChange={change}
+                        onChange={handleChange}
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
-                        autoFocus
                         fullWidth
                         label="Categoria"
                         name="categoria"
@@ -393,17 +543,18 @@ export default function TableList() {
             </div>
             {/* Agrega los botones de paginación */}
             <TablePagination
-              rowsPerPageOptions={[5, 10, 20]} // Opciones para el tamaño de página
+              rowsPerPageOptions={availablePageSizes} // Opciones para el tamaño de página
               component="div"
               count={tableData.length} // Total de filas
               rowsPerPage={pageSize} // Tamaño de página actual
               page={currentPage} // Página actual
-              onChangePage={(e, newPage) => setCurrentPage(newPage)} // Función para cambiar de página
-              onChangeRowsPerPage={(e) => {
+              onPageChange={(e, newPage) => setCurrentPage(newPage)} // Función para cambiar de página
+              onRowsPerPageChange={(e) => {
                 setPageSize(parseInt(e.target.value, 10)); // Función para cambiar el tamaño de página
                 setCurrentPage(0); // Volver a la página 0 cuando se cambia el tamaño de página
               }}
             />
+
             <Table>
               <TableHead>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -430,7 +581,7 @@ export default function TableList() {
                     (currentPage + 1) * pageSize
                   )
                   .map((row) => (
-                    <TableRow key={row.id} onClick={() => handleRowClick(row)}>
+                    <TableRow key={row.id}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
@@ -449,34 +600,7 @@ export default function TableList() {
                         >
                           <DeleteIcon />
                         </Button>
-                        <Dialog
-                          open={openDelete}
-                          onClose={() => setOpenDelete(true)}
-                        >
-                          <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
-                          <DialogContent>
-                            <Typography variant="body1">
-                              {" "}
-                              Esta acción eliminará permanentemente los datos.{" "}
-                            </Typography>
-                          </DialogContent>
-                          <DialogActions>
-                            <Button
-                              onClick={() => setOpenDelete(false)}
-                              color="secondary"
-                            >
-                              Cancelar
-                            </Button>
-                            <Button
-                              color="primary"
-                              style={{ color: "white", backgroundColor: "red" }}
-                              onClick={() => Delete()}
-                            >
-                              {" "}
-                              Eliminar{" "}
-                            </Button>
-                          </DialogActions>
-                        </Dialog>
+
                         <Button
                           color="primary"
                           onClick={() => {
@@ -486,71 +610,6 @@ export default function TableList() {
                         >
                           <EditIcon />
                         </Button>
-                        <Dialog
-                          open={openUpdate}
-                          onClose={() => setOpenUpdate(true)}
-                        >
-                          <DialogTitle>Actualizar Inventario</DialogTitle>
-                          <DialogContent>
-                            <Grid container spacing={2}>
-                              <Grid item xs={12}>
-                                <TextField
-                                  autoFocus
-                                  fullWidth
-                                  label="Producto"
-                                  name="nombre"
-                                  variant="outlined"
-                                  defaultValue={inventario.nombre}
-                                  onChange={change}
-                                />
-                              </Grid>
-                              <Grid item xs={12}>
-                                <TextField
-                                  autoFocus
-                                  fullWidth
-                                  label="Categoria"
-                                  name="categoria"
-                                  variant="outlined"
-                                  defaultValue={inventario.categoria}
-                                  onChange={change}
-                                />
-                              </Grid>
-                              <Grid item xs={12}>
-                                <TextField
-                                  fullWidth
-                                  label="Cantidad"
-                                  name="cantidad"
-                                  variant="outlined"
-                                  defaultValue={inventario.cantidad}
-                                  onChange={change}
-                                />
-                              </Grid>
-                            </Grid>{" "}
-                            {error && (
-                              <DialogContentText color="error">
-                                {" "}
-                                {error}{" "}
-                              </DialogContentText>
-                            )}
-                          </DialogContent>
-                          <DialogActions>
-                            <Button
-                              onClick={() => {
-                                setOpenUpdate(false);
-                                setError(null);
-                              }}
-                            >
-                              Cancelar
-                            </Button>
-                            <Button
-                              color="primary"
-                              variant="contained"
-                              onClick={() => Submit()}
-                            >
-                              Guardar
-                            </Button>
-                          </DialogActions>
-                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))}
