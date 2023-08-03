@@ -1,12 +1,13 @@
 const Paciente = require("../models/paciente");
+const { format, eachDayOfInterval } = require("date-fns");
 
 async function validarDatosPaciente(
   rut,
   nombre,
   direccion,
-  edad,
-  saldo,
-  correo
+  correo,
+  sexo,
+  fechaNacimiento
 ) {
   if (rut.length < 8 || rut.length > 12) {
     throw new Error("El rut es incorrecto");
@@ -14,7 +15,7 @@ async function validarDatosPaciente(
 
   const regexRut = /^[\d.kK-]+$/;
   if (!regexRut.test(rut)) {
-    throw new Error("El rut no puede contener letras");
+    throw new Error("Formato incorrecto del rut");
   }
 
   const rutRegistrado = await Paciente.findOne({ rut: rut });
@@ -36,61 +37,74 @@ async function validarDatosPaciente(
     throw new Error("La direccion no contiene los suficientes caracteres");
   }
 
-  if (edad < 0 || edad > 150) {
-    throw new Error("La edad es incorrecta");
+  const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!correoRegex.test(correo)) {
+    throw new Error("Formato de correo incorrecto");
   }
 
-  if (saldo < 0) {
-    throw new Error("El saldo es incorrecto");
+  if (sexo.length == 0) {
+    throw new Error("Debe marcar el sexo");
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!emailRegex.test(correo)) {
-    throw new Error("El formato del correo es incorrecto");
+  if (fechaNacimiento == 0) {
+    throw new Error("Debe ingresa una fecha de nacimiento");
   }
 }
 
-async function validarActualizacionDatos(edad, saldo, direccion) {
+async function validarActualizacionDatos(
+  direccion,
+  edad,
+  correo,
+  fechaIngreso
+) {
   if (edad < 0 || edad > 150) {
     console.log("error edad");
     throw new Error("La edad es incorrecta");
   }
 
-  if (saldo < 0) {
-    console.log("error saldo");
-    throw new Error("El saldo es incorrecto");
-  }
   if (direccion.length < 8) {
     console.log("error direccion");
     throw new Error("La direccion no contiene los suficientes caracteres");
+  }
+
+  const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!correoRegex.test(correo)) {
+    throw new Error("Formato de correo incorrecto");
+  }
+
+  if (fechaIngreso == null) {
+    throw new Error("Fecha Incorrecta");
   }
 }
 
 const createPaciente = async (req, res) => {
   try {
-    const {
+    const { rut, nombre, direccion, correo, fechaNacimiento, sexo } = req.body;
+
+    await validarDatosPaciente(
       rut,
       nombre,
       direccion,
-      edad,
-      saldo,
       correo,
-      fechaNacimiento,
       sexo,
-    } = req.body;
+      fechaNacimiento
+    );
 
-    await validarDatosPaciente(rut, nombre, direccion, edad, saldo, correo);
+    const edad = calcularEdad(fechaNacimiento);
+
+    const fechaIngreso = format(new Date(), "dd/MM/yyyy");
 
     const newPaciente = new Paciente({
       rut,
       nombre,
       direccion,
       edad,
-      saldo,
       correo,
       fechaNacimiento,
       sexo,
+      fechaIngreso,
     });
 
     const paciente = await newPaciente.save();
@@ -121,9 +135,9 @@ const updatePaciente = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { direccion, edad, saldo } = req.body;
+    const { direccion, edad, correo, fechaIngreso } = req.body;
 
-    await validarActualizacionDatos(edad, saldo, direccion);
+    await validarActualizacionDatos(direccion, edad, correo, fechaIngreso);
 
     const paciente = await Paciente.findByIdAndUpdate(id, req.body, {
       new: true,
@@ -154,41 +168,26 @@ const deletePaciente = async (req, res) => {
   }
 };
 
-const buscarPorRut = async (req, res) => {
-  const rut = req.params.rut;
-  try {
-    const paciente = await Paciente.findOne({ rut: rut }).exec();
-    if (!paciente) {
-      return res
-        .status(404)
-        .send({ message: "No se han encontrado al paciente" });
-    }
-    return res.status(201).send(paciente);
-  } catch (error) {
-    return res.status(400).send({ message: "No se realizo la busqueda" });
-  }
-};
+function calcularEdad(dateString) {
+  const birthdateObj = new Date(dateString);
+  const currentDate = new Date();
 
-const buscarPorNombre = async (req, res) => {
-  const nombre = req.params.nombre;
-  try {
-    const paciente = await Paciente.findOne({ nombre: nombre }).exec();
-    if (!paciente) {
-      return res
-        .status(404)
-        .send({ message: "No se han encontrado al paciente" });
-    }
-    return res.status(201).send(paciente);
-  } catch (error) {
-    return res.status(400).send({ message: "No se realizo la busqueda" });
+  const yearsDiff = currentDate.getFullYear() - birthdateObj.getFullYear();
+  const monthsDiff = currentDate.getMonth() - birthdateObj.getMonth();
+  const daysDiff = currentDate.getDate() - birthdateObj.getDate();
+
+  let edad = yearsDiff;
+
+  if (monthsDiff < 0 || (monthsDiff === 0 && daysDiff < 0)) {
+    edad--;
   }
-};
+
+  return edad;
+}
 
 module.exports = {
   createPaciente,
   getPacientes,
   updatePaciente,
   deletePaciente,
-  buscarPorRut,
-  buscarPorNombre,
 };

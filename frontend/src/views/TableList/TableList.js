@@ -33,6 +33,11 @@ import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 
+import InputLabel from "@material-ui/core/InputLabel";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./DatePickerStyles.css";
+
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -110,12 +115,16 @@ export default function TableList() {
       header: () => <span>Edad</span>,
     },
     {
-      accessorKey: "saldo",
-      header: () => <span>Saldo</span>,
+      accessorKey: "correo",
+      header: () => <span>Correo</span>,
     },
     {
       accessorKey: "direccion",
       header: () => <span>Direccion</span>,
+    },
+    {
+      accessorKey: "fechaIngreso",
+      header: () => <span>Fecha Ingreso</span>,
     },
   ];
 
@@ -153,7 +162,8 @@ export default function TableList() {
   const [pacienteEdit, setPacienteEdit] = useState({
     edad: "",
     direccion: "",
-    saldo: "",
+    correo: "",
+    fechaIngreso: "",
   });
 
   const onCambio = (e) => {
@@ -171,7 +181,8 @@ export default function TableList() {
       nombre: row.original.nombre,
       edad: row.original.edad,
       direccion: row.original.direccion,
-      saldo: row.original.saldo,
+      correo: row.original.correo,
+      fechaIngreso: row.original.fechaIngreso,
     });
   };
 
@@ -191,28 +202,39 @@ export default function TableList() {
   const handleSubmit = async () => {
     console.log(pacienteEdit);
 
-    if (pacienteEdit.saldo < 0) {
-      setError("El saldo es incorrecto");
+    try {
+      const response = await axios.put(
+        `http://localhost:3001/api/paciente/${pacienteEdit._id}`,
+        pacienteEdit
+      );
+
+      console.log(response.data);
+      setOpenEditar(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+
+      console.log(pacienteEdit);
+    } catch (err) {
+      // Mostrar el mensaje de error con Swal.fire
+      console.log(err.response.data.message);
+      setError(err.response.data.message);
     }
+  };
 
-    if (pacienteEdit.direccion.length < 8) {
-      setError("La direccion no contiene los suficientes caracteres");
-    }
+  const [fechaIngreso, setFechaIngreso] = useState(0);
 
-    if (pacienteEdit.edad < 0 || pacienteEdit.edad > 150) {
-      setError("La edad es incorrecta");
-    }
+  const handleFecha = (fechaIngreso) => {
+    const fecha = new Date(fechaIngreso);
 
-    const response = await axios.put(
-      `http://localhost:3001/api/paciente/${pacienteEdit._id}`,
-      pacienteEdit
-    );
+    const mes = fecha.getMonth() + 1;
+    const dia = fecha.getDate();
+    const anio = fecha.getFullYear();
 
-    console.log(response.data);
-    setOpenEditar(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+    const fechaFormateada = `${mes}-${dia}-${anio}`;
+
+    setFechaIngreso(fechaIngreso); //siempre debe recibir la fecha en el formato React
+    pacienteEdit.fechaIngreso = fechaFormateada;
   };
 
   return (
@@ -319,14 +341,14 @@ export default function TableList() {
                           <Grid container spacing={2}>
                             <Grid item xs={12}>
                               <TextField
-                                autoFocus
                                 fullWidth
                                 label="Nombre"
                                 name="nombre"
                                 variant="outlined"
                                 defaultValue={pacienteEdit.nombre}
+                                disabled
                                 InputProps={{
-                                  readOnly: true,
+                                  style: { color: "black" }, // Cambiar el color del texto a negro
                                 }}
                               />
                             </Grid>
@@ -337,20 +359,10 @@ export default function TableList() {
                                 name="rut"
                                 variant="outlined"
                                 defaultValue={pacienteEdit.rut}
+                                disabled
                                 InputProps={{
-                                  readOnly: true,
+                                  style: { color: "black" }, // Cambiar el color del texto a negro
                                 }}
-                              />
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                fullWidth
-                                label="Edad"
-                                name="edad"
-                                variant="outlined"
-                                type="number"
-                                defaultValue={pacienteEdit.edad}
-                                onChange={onCambio}
                               />
                             </Grid>
                             <Grid item xs={12}>
@@ -366,12 +378,43 @@ export default function TableList() {
                             <Grid item xs={12}>
                               <TextField
                                 fullWidth
-                                label="Saldo"
-                                name="saldo"
-                                type="number"
+                                label="Correo"
+                                name="correo"
                                 variant="outlined"
-                                defaultValue={pacienteEdit.saldo}
+                                defaultValue={pacienteEdit.correo}
                                 onChange={onCambio}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <InputLabel>Fecha de Ingreso</InputLabel>
+                              <DatePicker
+                                className="custom-datepicker"
+                                placeholderText={new Date(
+                                  pacienteEdit.fechaIngreso
+                                ).toLocaleDateString("es-ES", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })}
+                                selected={fechaIngreso}
+                                id="fechaNacimiento"
+                                onChange={handleFecha}
+                                maxDate={new Date()}
+                                minDate={new Date(1880, 0, 1)}
+                              />
+                            </Grid>
+                            <Grid item xs={12}>
+                              <TextField
+                                id="correo"
+                                label="Historia clinica"
+                                type="text"
+                                variant="outlined"
+                                multiline
+                                fullWidth
+                                inputProps={{
+                                  multiline: true,
+                                  rows: 2,
+                                }}
                               />
                             </Grid>
                           </Grid>
