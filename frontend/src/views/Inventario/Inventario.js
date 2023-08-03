@@ -121,7 +121,6 @@ export default function TableList() {
     },
   ];
 
-  const [open, setOpen] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
@@ -170,8 +169,7 @@ export default function TableList() {
   // Función para validar los campos antes de cambiar el estado
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if ((name = "nombre" || name == "categoria")) {
+    if (name === "nombre" || name === "categoria") {
       if (!alphaRegex.test(value)) {
         // Validación para permitir solo letras y números
         // Muestra el mensaje de error
@@ -182,7 +180,7 @@ export default function TableList() {
         setError(null); // Limpia el mensaje de error
       }
     }
-    if ((name = "cantidad")) {
+    if (name === "cantidad") {
       if (!numericRegex.test(value)) {
         // Validación para permitir solo letras y números
         // Muestra el mensaje de error
@@ -195,6 +193,33 @@ export default function TableList() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    const { name, value } = e.target;
+    if (name === "nombre" || name === "categoria") {
+      if (!alphaRegex.test(e.key)) {
+        e.preventDefault();
+        // Validación para permitir solo letras y números
+        // Muestra el mensaje de error
+        setError(`${name}: ${alphaErrorMessage}`);
+      } else {
+        // Si el valor cumple con las validaciones, actualiza el estado
+        setInventario({ ...inventario, [name]: value });
+        setError(null); // Limpia el mensaje de error
+      }
+    }
+    if (name === "cantidad") {
+      if (!numericRegex.test(e.key)) {
+        e.preventDefault();
+        // Validación para permitir solo letras y números
+        // Muestra el mensaje de error
+        setError(`${name}: ${numericErrorMessage}`);
+      } else {
+        // Si el valor cumple con las validaciones, actualiza el estado
+        setInventario({ ...inventario, [name]: value });
+        setError(null); // Limpia el mensaje de error
+      }
+    }
+  };
   const change = (e) => {
     setInventario({ ...inventario, [e.target.name]: e.target.value });
   };
@@ -318,6 +343,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue={inventario.nombre}
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
                         }}
@@ -331,6 +357,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue={inventario.categoria}
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
                         }}
@@ -344,6 +371,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue={inventario.cantidad}
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[0-9]*",
                         }}
@@ -401,6 +429,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue=""
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
                         }}
@@ -414,6 +443,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue=""
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
                         }}
@@ -427,6 +457,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue=""
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
                         }}
@@ -485,6 +516,7 @@ export default function TableList() {
                         variant="outlined"
                         defaultValue=""
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -494,7 +526,8 @@ export default function TableList() {
                         name="categoria"
                         variant="outlined"
                         defaultValue=""
-                        onChange={change}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -504,7 +537,8 @@ export default function TableList() {
                         name="cantidad"
                         variant="outlined"
                         defaultValue=""
-                        onChange={change}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                       />
                     </Grid>
                   </Grid>{" "}
