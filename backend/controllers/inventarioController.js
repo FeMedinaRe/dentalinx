@@ -97,7 +97,6 @@ const createInventario = async (req, res) => {
       // UPDATE
       producto = await Inventario.findOne({ nombre: nombre }, { cantidad: 1 });
       cantidad += producto.cantidad;
-      console.log(cantidad);
       id = producto._id;
       producto = await Inventario.findByIdAndUpdate(
         id,
@@ -114,7 +113,6 @@ const createInventario = async (req, res) => {
 
     return res.status(201).send(producto);
   } catch (error) {
-    console.log(error);
     return res.status(400).send({ message: error.message });
   }
 };

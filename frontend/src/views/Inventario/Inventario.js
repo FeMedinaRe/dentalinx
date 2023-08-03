@@ -34,6 +34,7 @@ import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
 import TablePagination from "@material-ui/core/TablePagination";
+//import Autocomplete from "react-autocomplete";
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -92,6 +93,11 @@ export default function TableList() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(5); // Puedes ajustar el tamaño de página según tu preferencia (por ejemplo, 5, 20, etc.).
 
+  const [suggestionsProductos, setSuggestionsProductos] = useState([]);
+  const [suggestionsCategorias, setSuggestionsCategorias] = useState([]);
+  const [inputValueProductos, setInputValueProductos] = useState("");
+  const [inputValueCategorias, setInputValueCategorias] = useState("");
+  const [nombreSuggestions, setNombreSuggestions] = useState([]);
   const columns = [
     {
       accessorKey: "nombre",
@@ -136,6 +142,14 @@ export default function TableList() {
         const response = await api.get();
 
         setTableData(response.data);
+        var categoriasUnicas = [
+          ...new Set(response.data.map((item) => item.categoria)),
+        ];
+        setSuggestionsCategorias(categoriasUnicas);
+
+        // Extraer los nombres de productos del array
+        var nombresProductos = response.data.map((item) => item.nombre);
+        setSuggestionsProductos(nombresProductos);
       } catch (error) {
         console.error(error);
       }
@@ -208,11 +222,11 @@ export default function TableList() {
       }
     }
     if (name === "cantidad") {
-      if (!numericRegex.test(e.key)) {
+      if (!numericRegex.test(e.key) && e.key !== "Backspace") {
         e.preventDefault();
         // Validación para permitir solo letras y números
         // Muestra el mensaje de error
-        setError(`${name}: ${numericErrorMessage}`);
+        //setError(`${name}: ${numericErrorMessage}`);
       } else {
         // Si el valor cumple con las validaciones, actualiza el estado
         setInventario({ ...inventario, [name]: value });
@@ -303,7 +317,18 @@ export default function TableList() {
           </CardHeader>
           <CardBody>
             <div className={classes.inputContainer}>
-              {/* dialogo eliminar */}
+              <datalist id="suggestionsProductos">
+                {suggestionsProductos.map((producto, index) => (
+                  <option key={index} value={producto} />
+                ))}
+              </datalist>
+              {/* Lista de sugerencias para categorías */}
+              <datalist id="suggestionsCategorias">
+                {suggestionsCategorias.map((categoria, index) => (
+                  <option key={index} value={categoria} />
+                ))}
+              </datalist>
+
               <Dialog open={openDelete} onClose={() => setOpenDelete(true)}>
                 <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
                 <DialogContent>
@@ -335,6 +360,8 @@ export default function TableList() {
                 <DialogContent>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
+                      {/* Lista de sugerencias para productos */}
+
                       <TextField
                         autoFocus
                         fullWidth
@@ -342,10 +369,12 @@ export default function TableList() {
                         name="nombre"
                         variant="outlined"
                         defaultValue={inventario.nombre}
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
+                        onKeyDown={(e) => {
+                          handleKeyDown(e);
+                        }}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
+                          list: "suggestionsProductos",
                         }}
                       />
                     </Grid>
@@ -360,6 +389,7 @@ export default function TableList() {
                         onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
+                          list: "suggestionsCategorias",
                         }}
                       />
                     </Grid>
@@ -432,6 +462,7 @@ export default function TableList() {
                         onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
+                          list: "suggestionsProductos",
                         }}
                       />
                     </Grid>
@@ -446,6 +477,7 @@ export default function TableList() {
                         onKeyDown={handleKeyDown}
                         inputProps={{
                           pattern: "[a-zA-Z]*",
+                          list: "suggestionsCategorias",
                         }}
                       />
                     </Grid>
@@ -459,7 +491,7 @@ export default function TableList() {
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
                         inputProps={{
-                          pattern: "[a-zA-Z]*",
+                          pattern: "[0-9]*",
                         }}
                       />
                     </Grid>
@@ -515,8 +547,23 @@ export default function TableList() {
                         name="nombre"
                         variant="outlined"
                         defaultValue=""
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          handleChange(e);
+                          const value = e.target.value;
+                          setNombreSuggestions(
+                            suggestionsProductos.filter(
+                              (producto) =>
+                                producto
+                                  .toLowerCase()
+                                  .indexOf(value.toLowerCase()) !== -1
+                            )
+                          );
+                        }}
                         onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                          list: "suggestionsProductos",
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -528,6 +575,10 @@ export default function TableList() {
                         defaultValue=""
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                          list: "suggestionsCategorias",
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -539,6 +590,9 @@ export default function TableList() {
                         defaultValue=""
                         onChange={handleChange}
                         onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[0-9]*",
+                        }}
                       />
                     </Grid>
                   </Grid>{" "}
