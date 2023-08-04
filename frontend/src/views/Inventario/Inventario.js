@@ -34,7 +34,6 @@ import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
 import TablePagination from "@material-ui/core/TablePagination";
-//import Autocomplete from "react-autocomplete";
 const styles = {
   cardCategoryWhite: {
     "&,& a,& a:hover,& a:focus": {
@@ -148,7 +147,10 @@ export default function TableList() {
         setSuggestionsCategorias(categoriasUnicas);
 
         // Extraer los nombres de productos del array
-        var nombresProductos = response.data.map((item) => item.nombre);
+        var nombresProductos = [
+          ...new Set(response.data.map((item) => item.nombre)),
+        ];
+
         setSuggestionsProductos(nombresProductos);
       } catch (error) {
         console.error(error);
