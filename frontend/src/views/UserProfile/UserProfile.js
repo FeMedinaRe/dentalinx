@@ -25,6 +25,10 @@ import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import { TextFields } from "@material-ui/icons";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./DatePickerStyles.css";
+
 const styles = {
   cardCategoryWhite: {
     color: "rgba(255,255,255,.62)",
@@ -52,10 +56,17 @@ export default function UserProfile() {
     rut: "",
     direccion: "",
     edad: "",
-    saldo: "",
     correo: "",
+    fechaNacimiento: "",
     sexo: "",
   });
+
+  const [fechaNacimiento, setFechaNacimiento] = useState(0);
+
+  const handleFechaNacimientoChange = (fechaNacimiento) => {
+    setFechaNacimiento(fechaNacimiento);
+    values.fechaNacimiento = fechaNacimiento;
+  };
 
   const updateSelect = (e) => {
     values.sexo = e.target.value;
@@ -63,6 +74,7 @@ export default function UserProfile() {
 
   const onChange = (e) => {
     e.preventDefault();
+
     setValues({
       ...values,
       [e.target.id]: e.target.value,
@@ -73,6 +85,7 @@ export default function UserProfile() {
     e.preventDefault();
 
     console.log(values);
+
     try {
       const response = await axios.post(
         "http://localhost:3001/api/paciente",
@@ -91,22 +104,23 @@ export default function UserProfile() {
         }, 2500);
       }
     } catch (err) {
+      // Mostrar el mensaje de error con Swal.fire
+      console.log(err.response.data.message);
+
       Swal.fire({
-        title: "Error al Guardar",
-        text: "Hubo un error al guardar al paciente.Inténtalo nuevamente",
         icon: "error",
-        confirmButtonText: "Aceptar",
+        title: "Error",
+        text: err.response.data.message,
       });
     }
   };
-
   const classes = useStyles();
   return (
     <div>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={8}>
+        <GridItem xs={12} sm={12} md={11}>
           <Card>
-            <CardHeader color="primary">
+            <CardHeader color="primary" position="relative">
               <h4 className={classes.cardTitleWhite}>Registar Paciente</h4>
             </CardHeader>
             <CardBody>
@@ -129,36 +143,16 @@ export default function UserProfile() {
                     fullWidth
                   />
                 </GridItem>
-              </Box>
-              <Box display="flex" height="100%" marginTop={3}>
-                <GridItem xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Direccion"
-                    id="direccion"
-                    onChange={onChange}
-                    fullWidth
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Edad"
-                    id="edad"
-                    type="number"
-                    onChange={onChange}
-                    fullWidth
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Saldo"
-                    id="saldo"
-                    type="number"
-                    onChange={onChange}
-                    fullWidth
-                  />
+                <GridItem xs={12} sm={12} md={2}>
+                  <InputLabel>Sexo</InputLabel>
+                  <Select label="Sexo" onChange={updateSelect}>
+                    <MenuItem value="Masculino">Masculino</MenuItem>
+                    <MenuItem value="Femenino">Femenino</MenuItem>
+                    <MenuItem value="Otro">Otro</MenuItem>
+                  </Select>
                 </GridItem>
               </Box>
-              <Box display="flex" height="100%" marginTop={3}>
+              <Box display="flex" height="100%" marginTop={5}>
                 <GridItem xs={12} sm={12} md={4}>
                   <TextField
                     label="Correo"
@@ -169,12 +163,40 @@ export default function UserProfile() {
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                  <InputLabel>Sexo</InputLabel>
-                  <Select label="Sexo" onChange={updateSelect}>
-                    <MenuItem value="Masculino">Masculino</MenuItem>
-                    <MenuItem value="Femenino">Femenino</MenuItem>
-                    <MenuItem value="Otro">Otro</MenuItem>
-                  </Select>
+                  <TextField
+                    label="Direccion"
+                    id="direccion"
+                    type="text"
+                    onChange={onChange}
+                    fullWidth
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <InputLabel>Fecha de Nacimiento</InputLabel>
+                  <DatePicker
+                    className="custom-datepicker"
+                    selected={fechaNacimiento}
+                    id="fechaNacimiento"
+                    onChange={handleFechaNacimientoChange}
+                    maxDate={new Date()}
+                    minDate={new Date(1880, 0, 1)}
+                  />
+                </GridItem>
+              </Box>
+              <Box display="flex" height="100%" marginTop={3}></Box>
+              <Box display="flex" height="100%" marginTop={3}>
+                <GridItem xs={12} sm={12} md={5}>
+                  <InputLabel>Historia Clinica</InputLabel>
+                  <TextField
+                    id="correo"
+                    type="text"
+                    multiline
+                    fullWidth
+                    inputProps={{
+                      multiline: true,
+                      rows: 2,
+                    }}
+                  />
                 </GridItem>
               </Box>
             </CardBody>
@@ -183,27 +205,6 @@ export default function UserProfile() {
                 Guardar
               </Button>
             </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card profile>
-            <CardAvatar profile>
-              <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                <img src={avatar} alt="..." />
-              </a>
-            </CardAvatar>
-            <CardBody profile>
-              <h6 className={classes.cardCategory}>CEO / CO-FOUNDER</h6>
-              <h4 className={classes.cardTitle}>Alec Thompson</h4>
-              <p className={classes.description}>
-                Don{"'"}t be scared of the truth because we need to restart the
-                human foundation in truth And I love you like Kanye loves Kanye
-                I love Rick Owens’ bed design but the back is...
-              </p>
-              <Button color="primary" round>
-                Follow
-              </Button>
-            </CardBody>
           </Card>
         </GridItem>
       </GridContainer>
