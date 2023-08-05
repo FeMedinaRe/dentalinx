@@ -86,7 +86,7 @@ const dashboardRoutes = [{
 
     {
         path: "/reserveattention",
-        name: "Reservar Hora",
+        name: "Reservar Cita",
         icon: Notifications,
         component: ReserveAttention,
         layout: "/admin",
