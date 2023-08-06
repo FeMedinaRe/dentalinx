@@ -32,6 +32,7 @@ import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import Clinicas from "views/ListadoClinicas/Clinicas.js";
+import RegistroClinicas from "views/RegistroClinicas/RegistroClinicas";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -46,7 +47,7 @@ const dashboardRoutes = [
     path: "/registroPacientes",
     name: "Registrar Pacientes",
     icon: Person,
-    component: RegistroPacientes,
+    component: Maps,
     layout: "/admin",
   },
   {
@@ -85,12 +86,13 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/notifications",
-    name: "Notifications",
-    icon: Notifications,
-    component: NotificationsPage,
+    path: "/registroClinicas",
+    name: "Registro Clinicas",
+    icon: LocationOn,
+    component: RegistroClinicas,
     layout: "/admin",
   },
+ 
 ];
 
 export default dashboardRoutes;
