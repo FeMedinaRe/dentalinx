@@ -26,7 +26,7 @@ import Notifications from "@material-ui/icons/Notifications";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
-import Typography from "views/Typography/Typography.js";
+import Profesionales from "views/Profesionales/Profesionales.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
@@ -55,10 +55,10 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/typography",
-    name: "Typography",
+    path: "/Profesionales",
+    name: "Profesionales",
     icon: LibraryBooks,
-    component: Typography,
+    component: Profesionales,
     layout: "/admin",
   },
   {
