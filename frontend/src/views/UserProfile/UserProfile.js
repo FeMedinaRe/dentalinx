@@ -118,7 +118,7 @@ export default function UserProfile() {
   return (
     <div>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={11}>
+        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color="primary" position="relative">
               <h4 className={classes.cardTitleWhite}>Registar Paciente</h4>

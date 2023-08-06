@@ -104,25 +104,33 @@ export default function UserProfile() {
   return (
     <div>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={8}>
+        <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Registar Paciente</h4>
+              <h4 className={classes.cardTitleWhite}>Registar Tratamiento al paciente</h4>
             </CardHeader>
             <CardBody>
               <Box display="flex" height="100%" marginTop={3}>
                 <GridItem item xs={12} sm={6} md={4}>
                   <TextField
-                    label="Nombre Completo"
+                    label="Nombre del Tratamiento"
                     id="nombre"
                     type="text"
                     fullWidth
                     onChange={onChange}
                   />
                 </GridItem>
-                <GridItem item xs={12} sm={6} md={4}>
+                <GridItem xs={12} sm={12} md={4}>
                   <TextField
-                    label="Rut"
+                    label="Descripción"
+                    id="direccion"
+                    onChange={onChange}
+                    fullWidth
+                  />
+                </GridItem>
+                <GridItem item xs={12} sm={6} md={2}>
+                  <TextField
+                    label="Costo"
                     id="rut"
                     type="text"
                     onChange={onChange}
@@ -133,44 +141,18 @@ export default function UserProfile() {
               <Box display="flex" height="100%" marginTop={3}>
                 <GridItem xs={12} sm={12} md={3}>
                   <TextField
-                    label="Direccion"
-                    id="direccion"
-                    onChange={onChange}
-                    fullWidth
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Edad"
+                    label="Número de Sesiones"
                     id="edad"
                     type="number"
                     onChange={onChange}
-                    fullWidth
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={3}>
-                  <TextField
-                    label="Saldo"
-                    id="saldo"
-                    type="number"
-                    onChange={onChange}
-                    fullWidth
-                  />
-                </GridItem>
-              </Box>
-              <Box display="flex" height="100%" marginTop={3}>
-                <GridItem xs={12} sm={12} md={4}>
-                  <TextField
-                    label="Correo"
-                    id="correo"
-                    type="text"
-                    onChange={onChange}
+                    min={10}
+                    max={20}
                     fullWidth
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                  <InputLabel>Sexo</InputLabel>
-                  <Select label="Sexo" onChange={updateSelect}>
+                  <InputLabel>Paciente</InputLabel>
+                  <Select label="Paciente" onChange={updateSelect} fullWidth>
                     <MenuItem value="Masculino">Masculino</MenuItem>
                     <MenuItem value="Femenino">Femenino</MenuItem>
                     <MenuItem value="Otro">Otro</MenuItem>

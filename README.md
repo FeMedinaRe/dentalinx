@@ -1,21 +1,19 @@
-// Instalación y configuración de proyecto en servidor debian 11
+// instalación de proyecto en debian 11
 
-$ sudo apt install git nodejs npm
-$ npm install --global yarn
-$ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
-// reiniciar sesión bash
-$ nvm install 14.20.1
-$ nvm use 14.20.1
-$ mkdir dentalinx
-$ cd dentalinx
-$ git clone https://github.com/FeMedinaRe/dentalinx.git
+// instalar paquetes necesarios
+apt install git nodejs npm -y
+npm install --global yarn
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
 
-// backend
-$ cd backend
-$ yarn install 
-$ yarn start
+// reiniciar sesión shell
 
-// frontend
-$ cd frontend
-$ yarn install
-$ yarn start
+nvm install 14.20.1
+nvm use 14.20.1
+
+cd dentalinx/backend/
+yarn install
+yarn run dev
+
+cd dentalinx/frontend/
+yarn install
+yarn run dev
