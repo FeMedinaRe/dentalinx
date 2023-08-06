@@ -9,6 +9,6 @@ api.delete("/inventario/:id", inventarioController.deleteInventario);
 api.get("/inventarioPorRut/:rut", inventarioController.buscarPorRut);
 api.get("/inventarioPorNombre/:nombre", inventarioController.buscarPorNombre);
 // prueba
-api.put("/inventarioAction/:action", inventarioController.update);
+api.put("/inventarioQuitar/:action", inventarioController.update);
 
 module.exports = api;
