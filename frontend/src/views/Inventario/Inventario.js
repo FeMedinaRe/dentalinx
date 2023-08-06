@@ -80,23 +80,21 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 
-const filtro = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value);
-  addMeta({ itemRank });
-  return itemRank.passed;
-};
-
 export default function TableList() {
   const [tableData, setTableData] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(5); // Puedes ajustar el tamaño de página según tu preferencia (por ejemplo, 5, 20, etc.).
-
+  const [pageSize, setPageSize] = useState(5);
   const [suggestionsProductos, setSuggestionsProductos] = useState([]);
   const [suggestionsCategorias, setSuggestionsCategorias] = useState([]);
-  const [inputValueProductos, setInputValueProductos] = useState("");
-  const [inputValueCategorias, setInputValueCategorias] = useState("");
-  const [nombreSuggestions, setNombreSuggestions] = useState([]);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
+  const [openRemove, setOpenRemove] = useState(false);
+  const alphaRegex = /^[a-zA-Z\s]*$/;
+  const numericRegex = /^[0-9]*$/;
+  const alphaErrorMessage = "Solo se permiten letras.";
+  const numericErrorMessage = "Solo se permiten números.";
   const columns = [
     {
       accessorKey: "nombre",
@@ -125,12 +123,6 @@ export default function TableList() {
       ),
     },
   ];
-
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [openRemove, setOpenRemove] = useState(false);
-
   const api = axios.create({
     baseURL: "http://localhost:3001/api/inventario",
   });
@@ -139,18 +131,14 @@ export default function TableList() {
     const fetchData = async () => {
       try {
         const response = await api.get();
-
         setTableData(response.data);
         var categoriasUnicas = [
           ...new Set(response.data.map((item) => item.categoria)),
         ];
         setSuggestionsCategorias(categoriasUnicas);
-
-        // Extraer los nombres de productos del array
         var nombresProductos = [
           ...new Set(response.data.map((item) => item.nombre)),
         ];
-
         setSuggestionsProductos(nombresProductos);
       } catch (error) {
         console.error(error);
@@ -168,7 +156,6 @@ export default function TableList() {
   });
 
   const classes = useStyles();
-
   const [inventario, setInventario] = useState({
     nombre: "",
     categoria: "",
@@ -176,35 +163,23 @@ export default function TableList() {
   });
 
   // Expresiones regulares para validar letras y números
-  const alphaRegex = /^[a-zA-Z]*$/;
-  const numericRegex = /^[0-9]*$/;
-  const alphanumericErrorMessage = "Solo se permiten letras y números.";
-  const alphaErrorMessage = "Solo se permiten letras.";
-  const numericErrorMessage = "Solo se permiten números.";
 
-  // Función para validar los campos antes de cambiar el estado
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "nombre" || name === "categoria") {
       if (!alphaRegex.test(value)) {
-        // Validación para permitir solo letras y números
-        // Muestra el mensaje de error
         setError(`${name}: ${alphaErrorMessage}`);
       } else {
-        // Si el valor cumple con las validaciones, actualiza el estado
         setInventario({ ...inventario, [name]: value });
-        setError(null); // Limpia el mensaje de error
+        setError(null);
       }
     }
     if (name === "cantidad") {
       if (!numericRegex.test(value)) {
-        // Validación para permitir solo letras y números
-        // Muestra el mensaje de error
         setError(`${name}: ${numericErrorMessage}`);
       } else {
-        // Si el valor cumple con las validaciones, actualiza el estado
         setInventario({ ...inventario, [name]: value });
-        setError(null); // Limpia el mensaje de error
+        setError(null);
       }
     }
   };
@@ -257,7 +232,7 @@ export default function TableList() {
         window.location.reload();
       });
     } catch (err) {
-      setError("Ocurrió un error al actualizar los datos del paciente.");
+      setError("Ocurrió un error al actualizar inventario.");
     }
   };
 
@@ -275,8 +250,10 @@ export default function TableList() {
 
   const update = async (action) => {
     try {
-      alert(action);
-      const response = await api.put(`Action/${action}`, inventario);
+      const response = await axios.put(
+        `http://localhost:3001/api/inventarioQuitar/${action}`,
+        inventario
+      );
       setOpenUpdate(false);
       setTimeout(() => {
         window.location.reload();
@@ -288,7 +265,6 @@ export default function TableList() {
 
   const Submit = async () => {
     try {
-      alert(inventario._id);
       const response = await axios.put(
         `http://localhost:3001/api/inventario/${inventario._id}`,
         inventario
@@ -298,7 +274,7 @@ export default function TableList() {
         window.location.reload();
       }, 500);
     } catch (err) {
-      setError("Ocurrió un error al actualizar los datos del paciente.");
+      setError("Ocurrió un error al actualizar inventario.");
     }
   };
 
@@ -324,13 +300,167 @@ export default function TableList() {
                   <option key={index} value={producto} />
                 ))}
               </datalist>
-              {/* Lista de sugerencias para categorías */}
               <datalist id="suggestionsCategorias">
                 {suggestionsCategorias.map((categoria, index) => (
                   <option key={index} value={categoria} />
                 ))}
               </datalist>
-
+              <Dialog open={openRemove} onClose={() => setOpenRemove(true)}>
+                <DialogTitle style={{ textAlign: "center" }}>
+                  {" "}
+                  QUITAR{" "}
+                </DialogTitle>
+                <DialogContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        autoFocus
+                        fullWidth
+                        label="Producto"
+                        name="nombre"
+                        variant="outlined"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                          list: "suggestionsProductos",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Categoria"
+                        name="categoria"
+                        variant="outlined"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                          list: "suggestionsCategorias",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Cantidad"
+                        name="cantidad"
+                        variant="outlined"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[0-9]*",
+                        }}
+                      />
+                    </Grid>
+                  </Grid>{" "}
+                  {error && (
+                    <DialogContentText color="error">
+                      {" "}
+                      {error}{" "}
+                    </DialogContentText>
+                  )}
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => {
+                      setOpenRemove(false);
+                      setError(null);
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => update("remove")}
+                  >
+                    Guardar
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              <Dialog open={openCreate} onClose={() => setOpenCreate(true)}>
+                <DialogTitle style={{ textAlign: "center" }}>
+                  {" "}
+                  AÑADIR{" "}
+                </DialogTitle>
+                <DialogContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        autoFocus
+                        fullWidth
+                        label="Producto"
+                        name="nombre"
+                        variant="outlined"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                          list: "suggestionsProductos",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Categoria"
+                        name="categoria"
+                        variant="outlined"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[a-zA-Z]*",
+                          list: "suggestionsCategorias",
+                        }}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Cantidad"
+                        name="cantidad"
+                        variant="outlined"
+                        defaultValue=""
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        inputProps={{
+                          pattern: "[0-9]*",
+                        }}
+                      />
+                    </Grid>
+                  </Grid>{" "}
+                  {error && (
+                    <DialogContentText color="error">
+                      {" "}
+                      {error}{" "}
+                    </DialogContentText>
+                  )}
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => {
+                      setOpenCreate(false);
+                      setError(null);
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => Create()}
+                  >
+                    Guardar
+                  </Button>
+                </DialogActions>
+              </Dialog>
               <Dialog open={openDelete} onClose={() => setOpenDelete(true)}>
                 <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
                 <DialogContent>
@@ -356,7 +486,6 @@ export default function TableList() {
                   </Button>
                 </DialogActions>
               </Dialog>
-
               <Dialog open={openUpdate} onClose={() => setOpenUpdate(true)}>
                 <DialogTitle>Actualizar Inventario</DialogTitle>
                 <DialogContent>
@@ -443,87 +572,6 @@ export default function TableList() {
               >
                 <Remove />
               </Button>
-
-              {/* DIALOGO QUITAR */}
-              <Dialog open={openRemove} onClose={() => setOpenRemove(true)}>
-                <DialogTitle style={{ textAlign: "center" }}>
-                  {" "}
-                  QUITAR{" "}
-                </DialogTitle>
-                <DialogContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <TextField
-                        autoFocus
-                        fullWidth
-                        label="Producto"
-                        name="nombre"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        inputProps={{
-                          pattern: "[a-zA-Z]*",
-                          list: "suggestionsProductos",
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Categoria"
-                        name="categoria"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        inputProps={{
-                          pattern: "[a-zA-Z]*",
-                          list: "suggestionsCategorias",
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Cantidad"
-                        name="cantidad"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        inputProps={{
-                          pattern: "[0-9]*",
-                        }}
-                      />
-                    </Grid>
-                  </Grid>{" "}
-                  {error && (
-                    <DialogContentText color="error">
-                      {" "}
-                      {error}{" "}
-                    </DialogContentText>
-                  )}
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    onClick={() => {
-                      setOpenRemove(false);
-                      setError(null);
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={() => update("remove")}
-                  >
-                    Guardar
-                  </Button>
-                </DialogActions>
-              </Dialog>
-
               <Button
                 color="primary"
                 onClick={() => {
@@ -532,98 +580,6 @@ export default function TableList() {
               >
                 <Add />
               </Button>
-
-              {/* DIALOGO AÑADIR */}
-              <Dialog open={openCreate} onClose={() => setOpenCreate(true)}>
-                <DialogTitle style={{ textAlign: "center" }}>
-                  {" "}
-                  AÑADIR{" "}
-                </DialogTitle>
-                <DialogContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <TextField
-                        autoFocus
-                        fullWidth
-                        label="Producto"
-                        name="nombre"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={(e) => {
-                          handleChange(e);
-                          const value = e.target.value;
-                          setNombreSuggestions(
-                            suggestionsProductos.filter(
-                              (producto) =>
-                                producto
-                                  .toLowerCase()
-                                  .indexOf(value.toLowerCase()) !== -1
-                            )
-                          );
-                        }}
-                        onKeyDown={handleKeyDown}
-                        inputProps={{
-                          pattern: "[a-zA-Z]*",
-                          list: "suggestionsProductos",
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Categoria"
-                        name="categoria"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        inputProps={{
-                          pattern: "[a-zA-Z]*",
-                          list: "suggestionsCategorias",
-                        }}
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Cantidad"
-                        name="cantidad"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={handleChange}
-                        onKeyDown={handleKeyDown}
-                        inputProps={{
-                          pattern: "[0-9]*",
-                        }}
-                      />
-                    </Grid>
-                  </Grid>{" "}
-                  {error && (
-                    <DialogContentText color="error">
-                      {" "}
-                      {error}{" "}
-                    </DialogContentText>
-                  )}
-                </DialogContent>
-                <DialogActions>
-                  <Button
-                    onClick={() => {
-                      setOpenCreate(false);
-                      setError(null);
-                    }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    onClick={() => Create()}
-                  >
-                    Guardar
-                  </Button>
-                </DialogActions>
-              </Dialog>
-
               <input
                 type="text"
                 placeholder="Buscar"
@@ -705,6 +661,18 @@ export default function TableList() {
                   ))}
               </TableBody>
             </Table>
+            <TablePagination
+              rowsPerPageOptions={availablePageSizes} // Opciones para el tamaño de página
+              component="div"
+              count={tableData.length} // Total de filas
+              rowsPerPage={pageSize} // Tamaño de página actual
+              page={currentPage} // Página actual
+              onPageChange={(e, newPage) => setCurrentPage(newPage)} // Función para cambiar de página
+              onRowsPerPageChange={(e) => {
+                setPageSize(parseInt(e.target.value, 10)); // Función para cambiar el tamaño de página
+                setCurrentPage(0); // Volver a la página 0 cuando se cambia el tamaño de página
+              }}
+            />
           </CardBody>
         </Card>
       </GridItem>
