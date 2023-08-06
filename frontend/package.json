@@ -23,7 +23,8 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.3",
     "react-swipeable-views": "0.13.9",
-    "sweetalert2": "^11.7.12"
+    "sweetalert2": "^11.7.12",
+    "universal-cookie": "^4.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

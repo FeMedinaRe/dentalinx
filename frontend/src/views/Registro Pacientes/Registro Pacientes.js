@@ -59,6 +59,7 @@ export default function UserProfile() {
     correo: "",
     fechaNacimiento: "",
     sexo: "",
+    historiaClinica: "",
   });
 
   const [fechaNacimiento, setFechaNacimiento] = useState(0);
@@ -188,8 +189,9 @@ export default function UserProfile() {
                 <GridItem xs={12} sm={12} md={5}>
                   <InputLabel>Historia Clinica</InputLabel>
                   <TextField
-                    id="correo"
+                    id="historiaClinica"
                     type="text"
+                    onChange={onChange}
                     multiline
                     fullWidth
                     inputProps={{
