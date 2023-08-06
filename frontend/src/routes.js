@@ -32,6 +32,7 @@ import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import registrarTratamiento from "views/registrarTratamiento/registrarTratamiento.js";
+import listadoTratamientos from "views/listaTratamientos/listaTratamientos.js";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -55,6 +56,13 @@ const dashboardRoutes = [
     icon: LibraryBooks,
     component: registrarTratamiento,
     layout: "/admin",
+  },
+  {
+    path: "/listadoTratamientos",
+    name: "Listado Tratamientos",
+    icon: "content_paste",
+    component: listadoTratamientos,
+    layout: "/admin"
   },
   {
     path: "/table",
