@@ -20,18 +20,22 @@ const pacienteSchema = new Schema({
     type: Number,
     requiered: true,
   },
-  saldo: {
-    type: Number,
+  correo: {
+    type: String,
     required: true,
   },
-  correo: {
+  fechaNacimiento: {
     type: String,
     required: true,
   },
   sexo: {
     type: String,
-    enum: ["Femenino", "Masculino", "Otro"],
-    required: true,
+    enum: ["Femenino", "Masculino", "Otro", ""],
+    required: false,
+  },
+  fechaIngreso: {
+    type: String,
+    require: true,
   },
 });
 

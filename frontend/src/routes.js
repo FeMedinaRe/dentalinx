@@ -24,8 +24,9 @@ import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 // core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
-import UserProfile from "views/UserProfile/UserProfile.js";
-import TableList from "views/TableList/TableList.js";
+import RegistroPacientes from "views/Registro Pacientes/Registro Pacientes";
+import Pacientes from "views/Listado Pacientes/Pacientes";
+import Inventario from "views/Inventario/Inventario.js"; // INVENTARIO
 import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
@@ -41,17 +42,24 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/user",
+    path: "/registroPacientes",
     name: "Registrar Pacientes",
     icon: Person,
-    component: UserProfile,
+    component: RegistroPacientes,
     layout: "/admin",
   },
   {
-    path: "/table",
+    path: "/pacientes",
     name: "Listado Pacientes",
     icon: "content_paste",
-    component: TableList,
+    component: Pacientes,
+    layout: "/admin",
+  },
+  {
+    path: "/inventario",
+    name: "Inventario",
+    icon: "content_paste",
+    component: Inventario,
     layout: "/admin",
   },
   {
