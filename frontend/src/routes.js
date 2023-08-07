@@ -30,6 +30,7 @@ import Profesionales from "views/Profesionales/Profesionales.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
+import Profesional from "views/Profesional/Profesional.js"
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -52,6 +53,13 @@ const dashboardRoutes = [
     name: "Listado Pacientes",
     icon: "content_paste",
     component: TableList,
+    layout: "/admin",
+  },
+  {
+    path: "/profesional",
+    name: "Registrar profesional",
+    icon: Person,
+    component: Profesional,
     layout: "/admin",
   },
   {

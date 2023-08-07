@@ -16,10 +16,6 @@ const profesionalSchema = new Schema({
     type: String,
     required: false,
   },
-  edad: {
-    type: Number,
-    requiered: true,
-  },
   especialidad: {
     type: String,
     required: true,

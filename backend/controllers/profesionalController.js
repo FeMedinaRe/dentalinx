@@ -1,20 +1,35 @@
 const Profesional = require("../models/profesional");
 const { validate, clean, format, getCheckDigit } = require('rut.js');
 
+
+
+async function validarDatosUpdate(direccion,  especialidad) {
+
+    if(direccion.length>100 || direccion.length<1){
+        throw new Error ("Cantidad de caracteres no valida")
+    }
+
+
+    if(especialidad.length>100 || especialidad.length<1){
+        throw new Error ("Cantidad de caracteres no valida")
+    }
+}
+
 const createProfesional = async (req,res) => {
     try{
-        const {rut,nombre, direccion, edad, especialidad, correo, sexo } = req.body
+        const {rut,nombre, direccion, especialidad, correo, sexo } = req.body
     const newProfesional = new Profesional({
         rut,
         nombre,
         direccion,
-        edad,
         especialidad,
         correo,
         sexo
     })
 
-
+    if(rut.length==0 && nombre.length==0 && direccion.length==0 && especialidad.length==0 && correo.length==0 && sexo.length==0){
+        throw new Error ("Los campos estan vacios")
+    }
     const validarCorreo = (correo)=>{
         let expReg = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
         let verificar = expReg.test(correo)
@@ -31,6 +46,13 @@ const createProfesional = async (req,res) => {
         }
     }
     validarRutt(rut)
+
+    const validarSexo=(sexo)=>{
+        if (sexo.length == 0) {
+            throw new Error("Debe seleccionar el sexo");
+        }
+    }
+    validarSexo(sexo)
 
 
     const validarNombre = (nombre)=>{
@@ -80,7 +102,7 @@ const getPorNombre = async (req, res) => {
     } catch (error) {
     return res.status(400).send({ message: "No se ha podido realizar la busqueda" });
     }
-};
+}
 
 const getProfesionales= async (req,res) => {
 
@@ -98,30 +120,14 @@ const getProfesionales= async (req,res) => {
 
 }
 
-async function validarDatosUpdate(direccion, edad, especialidad) {
 
-    if(direccion.length>100 || direccion.length<1){
-        throw new Error ("Cantidad de caracteres no valida")
-    }
+const updateProfesional= async (req, res) => {
 
-    if (edad < 0 || edad > 150) {
-    throw new Error("La edad ingresada no es valida");
-    }
-
-    if(especialidad.length>100 || especialidad.length<1){
-        throw new Error ("Cantidad de caracteres no valida")
-    }
-}
-
-const updateProfesional= async (req, res)=> {
-   
     try {
         const { id } = req.params;
-        const { direccion, edad, especialidad } = req.body;
-        console.log(req.params)
-        console.log(req.body)
+        const { direccion, especialidad } = req.body;
 
-        await validarDatosUpdate(direccion , edad, especialidad);
+        await validarDatosUpdate(direccion , especialidad);
 
         const profesional = await Profesional.findByIdAndUpdate(id, req.body, {
         new: true,

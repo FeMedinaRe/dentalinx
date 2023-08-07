@@ -103,10 +103,6 @@ export default function TableList() {
       header: () => <span>Nombre</span>,
     },
     {
-      accessorKey: "edad",
-      header: () => <span>Edad</span>,
-    },
-    {
       accessorKey: "especialidad",
       header: () => <span>Especialidad</span>,
     },
@@ -149,7 +145,6 @@ export default function TableList() {
 
   const [profesionalEdit, setProfesionalEdit] = useState({
     direccion: "",
-    edad: "",
     especialidad: "",
   });
 
@@ -166,7 +161,6 @@ export default function TableList() {
       _id: row.original._id,
       rut: row.original.rut,
       nombre: row.original.nombre,
-      edad: row.original.edad,
       especialidad: row.original.especialidad,
       direccion: row.original.direccion,
       correo: row.original.correo
@@ -175,7 +169,7 @@ export default function TableList() {
 
   const handleDeleteRow = async () => {
     try {
-      axios.delete(`http://localhost:3001/api/deleteProfesional/${profesionalEdit._id}`
+      axios.delete(`http://localhost:3001/api/profesionalElim/${profesionalEdit._id}`
       );
       window.location.reload();
     } catch (error) {
@@ -332,16 +326,6 @@ export default function TableList() {
                                 name="direccion"
                                 variant="outlined"
                                 defaultValue={profesionalEdit.direccion}
-                                onChange={onCambio}
-                              />
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                fullWidth
-                                label="Edad"
-                                name="edad"
-                                variant="outlined"
-                                defaultValue={profesionalEdit.edad}
                                 onChange={onCambio}
                               />
                             </Grid>
