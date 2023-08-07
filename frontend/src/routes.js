@@ -35,70 +35,69 @@ import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
 
 // core components/views for RTL layout
 
-const dashboardRoutes = [
-  {
-    path: "/dashboard",
-    name: "Dashboard",
-    icon: Dashboard,
-    component: DashboardPage,
-    layout: "/admin",
-  },
-  {
-    path: "/registroPacientes",
-    name: "Registrar Pacientes",
-    icon: Person,
-    component: RegistroPacientes,
-    layout: "/admin",
-  },
-  {
-    path: "/pacientes",
-    name: "Listado Pacientes",
-    icon: "content_paste",
-    component: Pacientes,
-    layout: "/admin",
-  },
-  {
-    path: "/inventario",
-    name: "Inventario",
-    icon: "content_paste",
-    component: Inventario,
-    layout: "/admin",
-  },
-  {
-    path: "/typography",
-    name: "Typography",
-    icon: LibraryBooks,
-    component: Typography,
-    layout: "/admin",
-  },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: BubbleChart,
-    component: Icons,
-    layout: "/admin",
-  },
-  {
-    path: "/maps",
-    name: "Maps",
-    icon: LocationOn,
-    component: Maps,
-    layout: "/admin",
-  },
-  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: Notifications,
-    component: NotificationsPage,
-    layout: "/admin",
-  },
-  {
-    path: "/ReserveAttention",
-    name: "Reservar Atención",
-    icon: Notifications,
-    component: ReserveAttention,
-    layout: "/admin",
-  },
+const dashboardRoutes = [{
+        path: "/dashboard",
+        name: "Dashboard",
+        icon: Dashboard,
+        component: DashboardPage,
+        layout: "/admin",
+    },
+    {
+        path: "/registroPacientes",
+        name: "Registrar Pacientes",
+        icon: Person,
+        component: RegistroPacientes,
+        layout: "/admin",
+    },
+    {
+        path: "/pacientes",
+        name: "Listado Pacientes",
+        icon: "content_paste",
+        component: Pacientes,
+        layout: "/admin",
+    },
+    {
+        path: "/inventario",
+        name: "Inventario",
+        icon: "content_paste",
+        component: Inventario,
+        layout: "/admin",
+    },
+    {
+        path: "/typography",
+        name: "Typography",
+        icon: LibraryBooks,
+        component: Typography,
+        layout: "/admin",
+    },
+    {
+        path: "/icons",
+        name: "Icons",
+        icon: BubbleChart,
+        component: Icons,
+        layout: "/admin",
+    },
+    {
+        path: "/maps",
+        name: "Maps",
+        icon: LocationOn,
+        component: Maps,
+        layout: "/admin",
+    },
+    {
+        path: "/notifications",
+        name: "Notifications",
+        icon: Notifications,
+        component: NotificationsPage,
+        layout: "/admin",
+    },
+    {
+        path: "/reserveattention",
+        name: "Reservar Cita",
+        icon: Notifications,
+        component: ReserveAttention,
+        layout: "/admin",
+    },
 ];
 
 export default dashboardRoutes;
