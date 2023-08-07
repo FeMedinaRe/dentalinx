@@ -23,12 +23,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
+import TablePagination from "@material-ui/core/TablePagination";
 import Typography from "@material-ui/core/Typography";
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getPaginationRowModel,
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
@@ -38,6 +38,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
+// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import moment from 'moment';
 
 // Estilos de la página
 const styles = {
@@ -77,7 +81,7 @@ const styles = {
     padding: "8px",
     borderRadius: "4px",
     border: `1px solid`,
-    marginRight: "20px", // Espacio a la derecha del input
+    marginRight: "20px", 
     fontSize: "14px",
     color: "#777",
     outline: "none",
@@ -103,9 +107,9 @@ const filtro = (row, columnId, value, addMeta) => {
 
 export default function TableList() {
   const [tableData, setTableData] = useState([]);
-  const [datos, setDatos] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
-
+  const [pageSize, setPageSize] = useState(5);
+  const [currentPage, setCurrentPage] = useState(0);
   // Campos de la tabla
   const columns = [
     // {
@@ -129,54 +133,58 @@ export default function TableList() {
       header: () => <span>Fecha</span>,
     },
     {
-        accessorKey: "hora",
-        header: () => <span>Hora</span>,
-      },
+      accessorKey: "hora",
+      header: () => <span>Hora</span>,  
+    },
     {
-        accessorKey: "estado",
-        header: () => <span>Estado</span>,
-      },
+      accessorKey: "estado",
+      header: () => <span>Estado</span>,
+    },
   ];
 
   const [openCitaEliminar, setOpenCitaEliminar] = useState(false);
   const [openCitaEditar, setOpenCitaEditar] = useState(false);
   const [openCitaAgregar, setOpenCitaAgregar] = useState(false);
-  const [categoria, setCategoria] = useState([]);
 
   const [optionPaciente, setOptionPaciente] = useState([]);
   const [optionDentista, setOptionDentista] = useState([]);
   const [optionTratamiento, setOptionTratamiento] = useState([]);
-  const [selectedOptionPaciente, setSelectedOptionPaciente] = useState('');
 
   //Conexión a la base de datos, se realiza la solicitud HTTP al servidor
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get("http://localhost:3001/api/citas");
+
+        response.data.map((option) => (
+          option.fecha = new Date(option.fecha).toLocaleDateString('es-ES')
+        )
+        )
         setTableData(response.data);
 
-        //Sacamos los nombres de los pacientes y lo agregamos a fetchedOptions
-        const fetchedOptions  = [
-          ...new Set(response.data.map((item) => item.paciente_id)),
-        ];
-        
+       const responsePaciente = await axios.get("http://localhost:3001/api/citaPacientes");
+       const fetchedOptions  = [
+        ...new Set(responsePaciente.data.map((item) => item.nombre)),
+       ];
+
        setOptionPaciente(fetchedOptions);
+
+       const responseDentista = await axios.get("http://localhost:3001/api/citaDentistas");
 
         //Sacamos los nombres de los dentistas y lo agregamos a fetchedOptionDentista
         const fetchedOptionDentista  = [
-          ...new Set(response.data.map((item) => item.dentista_id)),
+          ...new Set(responseDentista.data.map((item) => item.nombre)),
         ];
         setOptionDentista(fetchedOptionDentista);
 
         //Sacamos los nombres de los tratamientos y lo agregamos a fetchedOptionTratamiento
+
+        const responseTratamientos = await axios.get("http://localhost:3001/api/citaTratamientos");
+
         const fetchedOptionTratamiento  = [
-          ...new Set(response.data.map((item) => item.tratamiento_id)),
+          ...new Set(responseTratamientos.data.map((item) => item.nombre)),
         ];
         setOptionTratamiento(fetchedOptionTratamiento);
-
-
-        
-        setDatos(response.data);
 
       } catch (error) {
         console.error(error);
@@ -189,17 +197,48 @@ export default function TableList() {
   const table = useReactTable({
     data: tableData,
     columns,
-    state: {
-      globalFilter,
+    state: { globalFilter, pageIndex: currentPage, pageSize
     },
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: filtro,
   });
 
   // Para aplicar los estilos 
   const classes = useStyles();
+
+  const inputDateStyles = {
+    width: '99%',
+    height: '30px',
+    fontSize: '16px',
+    padding: '5px 0px 5px 5px',
+    border: '1px solid #ccc',
+    borderRadius: '5px',
+  };
+
+  const [hovered, setHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHovered(false);
+  };
+
+  const buttonStyle = {
+    backgroundColor: hovered ? '#056974' : '#00acc1',
+    border: '1px solid #00acc1',
+    color: 'white',
+    padding: '15px 32px',
+    textAlign: 'center',
+    textDecoration: 'none',
+    display: 'inline-block',
+    fontSize: '16px',
+    cursor: 'pointer',
+    float: 'left',
+    marginRight: '5px',
+    borderRadius: '5px',
+    };
 
   // useState de la Cita medica
   const [editCitaMedica, setEditCitaMedica] = useState({
@@ -211,11 +250,16 @@ export default function TableList() {
     estado: "",
   });
 
+  const FormateoFecha = (fechaTabla) => {
+    const momentDate = moment(fechaTabla, 'DD-MM-YYYY').format('YYYY-MM-DD');
+  
+  return momentDate;
+  }
+
+
   const onCambio = (e) => {
-    setEditCitaMedica({
-      ...editCitaMedica,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setEditCitaMedica({ ...editCitaMedica, [name]: value });
   };
 
   const dialogEditar = (event, row) => {
@@ -240,7 +284,11 @@ export default function TableList() {
   })
 
   const crear = async (event) => {
-    console.log(citaCrear);
+    if (!citaCrear.fecha || !citaCrear.hora || !citaCrear.estado) {
+      setError("Por favor, completa todos los campos antes de crear la cita.");
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:3001/api/cita",citaCrear
       );
@@ -255,7 +303,9 @@ export default function TableList() {
 
   //Para almacenar los datos de la cita a eliminar
   const [citaEliminar, setCitaEliminar] = useState({
-    nombre: "",
+    paciente_id: "",
+    dentista_id: "",
+    tratamiento_id: "",
     fecha: "",
     hora: "",
     estado: "",
@@ -265,6 +315,9 @@ export default function TableList() {
   const dialogEliminar = (row) => {
     setCitaEliminar({
       _id: row.original._id,
+      paciente_id : row.original.paciente_id,
+      dentista_id : row.original.dentista_id,
+      tratamiento_id : row.original.tratamiento_id,
       fecha: row.original.fecha,
       hora: row.original.hora,
       estado: row.original.estado,
@@ -294,20 +347,29 @@ export default function TableList() {
   const [error, setError] = useState(null);
 
   const handleSubmit = async (event, rowID) => {
-    console.log(pacienteEdit._id);
     try {
+
+      console.log(editCitaMedica);
       const response = await axios.put(
-        `http://localhost:3001/api/paciente/${editCitaMedica._id}`,
-        // editCitaMedica
+        `http://localhost:3001/api/cita/${editCitaMedica._id}`,
+         editCitaMedica
       );
-      setopenCitaEditar(false);
+      setOpenCitaEditar(false);
       setTimeout(() => {
         window.location.reload();
       }, 500);
     } catch (err) {
+      alert(err);
       setError("Ocurrió un error al actualizar los datos del paciente.");
     }
   };
+
+  const totalPagesWithFivePerPage = Math.ceil(tableData.length / 5);
+  // Crear un array de opciones de tamaño de página con múltiplos de 5 hasta llegar a la cantidad total de filas
+  const availablePageSizes = Array.from(
+    { length: totalPagesWithFivePerPage },
+    (_, index) => (index + 1) * 5
+  ).filter((size) => size <= tableData.length);
 
   return (
     <GridContainer>
@@ -321,14 +383,18 @@ export default function TableList() {
             <div className={classes.inputContainer}>
 
             {/*SECCION AGREGAR*/}
-            <Button
-                color="primary"
+            <button
+                // color="primary"
+                style={buttonStyle}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
                 onClick={(event) => {
                   setOpenCitaAgregar(true);
                 }}
               >
-                <Add />
-              </Button>
+                Nueva Cita
+                
+              </button>
               <Dialog disableEnforceFocus open={openCitaAgregar} onClose={() => setOpenCitaAgregar(true)}>
                 <DialogTitle style={{ textAlign: "center" }}>
                   {" "}
@@ -387,19 +453,27 @@ export default function TableList() {
                     </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField          
-                        fullWidth
+                      <input
+                        type="date" 
+                        required        
                         label="Fecha"
                         name="fecha"
                         variant="outlined"
                         defaultValue=""
                         onChange={handleChange}
+                        style = {inputDateStyles}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField
-                        
-                        fullWidth
+                    {/* <LocalizationProvider >
+                      <DemoContainer components={['TimePicker']}>
+                        <TimePicker onChange={handleChange} label="Selecciona la hora" />
+                      </DemoContainer>
+                    </LocalizationProvider> */}
+                      <input
+                        required
+                        style={inputDateStyles}                   
+                        type="time"
                         label="Hora"
                         name="hora"
                         variant="outlined"
@@ -408,15 +482,18 @@ export default function TableList() {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <TextField
-                        
-                        fullWidth
-                        label="Estado"
-                        name="estado"
-                        variant="outlined"
-                        defaultValue=""
-                        onChange={handleChange}
-                      />
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Estado</InputLabel>
+                        <Select name ="estado" required
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          defaultValue=""
+                          onChange={handleChange}
+                        >
+                          <MenuItem value={"Agendada"}>Agendada</MenuItem>
+                          <MenuItem value={"Finalizada"}>Finalizada</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Grid>{" "}
                   {error && (
@@ -451,6 +528,18 @@ export default function TableList() {
                 className={classes.input}
               />
             </div>
+            <TablePagination
+              rowsPerPageOptions={availablePageSizes} // Opciones para el tamaño de página
+              component="div"
+              count={tableData.length} // Total de filas
+              rowsPerPage={pageSize} // Tamaño de página actual
+              page={currentPage} // Página actual
+              onPageChange={(e, newPage) => setCurrentPage(newPage)} // Función para cambiar de página
+              onRowsPerPageChange={(e) => {
+                setPageSize(parseInt(e.target.value, 10)); // Función para cambiar el tamaño de página
+                setCurrentPage(0); // Volver a la página 0 cuando se cambia el tamaño de página
+              }}
+            />
             <Table>
               <TableHead>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -472,7 +561,12 @@ export default function TableList() {
                 ))}
               </TableHead>
               <TableBody>
-                {table.getRowModel().rows.map((row) => (
+              {table
+                  .getRowModel()
+                  .rows.slice(
+                    currentPage * pageSize,
+                    (currentPage + 1) * pageSize
+                  ).map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
@@ -496,7 +590,7 @@ export default function TableList() {
                         open={openCitaEliminar}
                         onClose={() => setOpenCitaEliminar(true)}
                       >
-                        <DialogTitle>¿Está seguro de eliminar?</DialogTitle>
+                        <DialogTitle>¿Está seguro que desea eliminar la cita?</DialogTitle>
                         <DialogContent>
                           <Typography variant="body1">
                             Esta acción eliminará permanentemente los datos.
@@ -518,7 +612,6 @@ export default function TableList() {
                           </Button>
                         </DialogActions>
                       </Dialog>
-
                       {/*SECCION EDITAR*/}
                       <Button
                         color="primary"
@@ -585,36 +678,42 @@ export default function TableList() {
                             </FormControl>
                             </Grid>
                             <Grid item xs={12}>
-                            <TextField          
-                              fullWidth
+                            <input
+                              type="date" 
+                              required        
                               label="Fecha"
                               name="fecha"
                               variant="outlined"
-                              defaultValue={editCitaMedica.fecha}
+                              defaultValue={FormateoFecha(editCitaMedica.fecha)}
                               onChange={onCambio}
+                              style = {inputDateStyles}
                             />
                           </Grid>
                           <Grid item xs={12}>
-                            <TextField
-                              
-                              fullWidth
+                          <input
+                              type="time" 
+                              required        
                               label="Hora"
                               name="hora"
                               variant="outlined"
                               defaultValue={editCitaMedica.hora}
                               onChange={onCambio}
+                              style = {inputDateStyles}
                             />
                           </Grid>
                           <Grid item xs={12}>
-                            <TextField
-                              
-                              fullWidth
-                              label="Estado"
-                              name="estado"
-                              variant="outlined"
-                              defaultValue={editCitaMedica.estado}
-                              onChange={onCambio}
-                            />
+                          <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Estado</InputLabel>
+                        <Select name ="estado"
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          defaultValue={editCitaMedica.estado}
+                          onChange={handleChange}
+                        >
+                          <MenuItem value={"Agendada"}>Agendada</MenuItem>
+                          <MenuItem value={"Finalizada"}>Finalizada</MenuItem>
+                        </Select>
+                      </FormControl>
                           </Grid>
                           </Grid>{" "}
                           {error && (
@@ -636,14 +735,12 @@ export default function TableList() {
                           <Button
                             color="primary"
                             variant="contained"
-                            onClick={() => Submit()}
+                            onClick={(event) => handleSubmit(event, row)}
                           >
                             Guardar
                           </Button>
                         </DialogActions>
                       </Dialog>
-
-
                     </TableCell>
                   </TableRow>
                 ))}
