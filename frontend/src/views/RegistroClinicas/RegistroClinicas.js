@@ -127,7 +127,7 @@ export default function UserProfile() {
                 <GridItem item xs={12} sm={6} md={4}>
                   <TextField
                     label="Rut Clinica"
-                    id="rutlinica"
+                    id="rutClinica"
                     type="text"
                     onChange={onChange}
                     fullWidth
@@ -168,7 +168,7 @@ export default function UserProfile() {
                 <GridItem xs={12} sm={12} md={5}>
                   <InputLabel>Direccion</InputLabel>
                   <TextField
-                    id="DireccionClinica"
+                    id="direccionClinica"
                     type="text"
                     onChange={onChange}
                     multiline

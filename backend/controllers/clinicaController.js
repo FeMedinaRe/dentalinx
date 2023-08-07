@@ -42,7 +42,7 @@ async function validarDatosClinica(
     throw new Error("El telefono no cuenta con suficientes caracteres");
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!emailRegex.test(correoClinica)) {
     throw new Error("El formato del correo es incorrecto");
@@ -60,9 +60,9 @@ async function validarActualizacionDatos(direccionClinica) {
 
 const createClinica = async (req, res) => {
   try {
-    const { rutClinica, nombreClinica,telefono, direccionClinica, correoClinica, rutDueno } = req.body;
+    const { rutClinica, nombreClinica, telefono, direccionClinica, correoClinica, rutDueno } = req.body;
 
-    await validarDatosClinica(rutClinica, nombreClinica, direccionClinica, correoClinica, rutDueno,telefono);
+    await validarDatosClinica(rutClinica, nombreClinica, telefono, direccionClinica, correoClinica, rutDueno);
 
     const newClinica = new Clinica({
       rutClinica,
