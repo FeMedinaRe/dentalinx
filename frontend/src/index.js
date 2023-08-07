@@ -19,12 +19,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-<<<<<<< HEAD
+
 // import LoginForm from "./views/Login/LoginForm";
-=======
-//import LoginForm from "./views/Login/LoginForm";
->>>>>>> ec562b09117754ec941182175fc1474b5795d636
+
 // core components
+
 import Admin from "layouts/Admin.js";
 
 import "assets/css/material-dashboard-react.css?v=1.10.0";
