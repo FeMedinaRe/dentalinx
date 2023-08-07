@@ -1,7 +1,8 @@
-const cita = require("../models/cita");
+const Cita = require("../models/cita");
 const paciente = require("../models/paciente");
 const dentista = require("../models/dentista");
 const tratamiento = require("../models/tratamiento");
+
 
 async function validarDatoscita(
     rut,
@@ -67,11 +68,12 @@ async function validarActualizacionDatos(edad, saldo, direccion) {
     }
 }
 
+//Para crear una nueva cita
 const createCita = async(req, res) => {
     try {
         console.log("Hola");
         var { paciente_id, dentista_id, tratamiento_id, fecha, hora, estado } = req.body;
-    
+
         // var _categoria = categoria;
         // var _nombre = nombre;
         // var _cantidad = parseInt(cantidad);
@@ -80,27 +82,27 @@ const createCita = async(req, res) => {
         var _id_tratamiento = tratamiento_id;
 
         // console.log("_id_paciente:", _id_paciente);
-    
+
 
         //PACIENTE
-        paciente_id = await paciente.findOne({nombre: _id_paciente}, {_id: 1})
-        // console.log("AYUDA");
+        paciente_id = await paciente.findOne({ nombre: _id_paciente }, { _id: 1 })
+            // console.log("AYUDA");
         paciente_id = paciente_id._id;
         // console.log("ALOHA");
         console.log(paciente_id);
 
         //DENTISTA
-        dentista_id = await dentista.findOne({nombre: _id_dentista}, {_id: 1})
+        dentista_id = await dentista.findOne({ nombre: _id_dentista }, { _id: 1 })
         console.log("DENTISTA");
         dentista_id = dentista_id._id;
         console.log(dentista_id);
 
         //TRATAMIENTO
-        tratamiento_id = await tratamiento.findOne({nombre: _id_tratamiento}, {_id: 1})
+        tratamiento_id = await tratamiento.findOne({ nombre: _id_tratamiento }, { _id: 1 })
         console.log("TRATAMIENTO");
         tratamiento_id = tratamiento_id._id;
         console.log(tratamiento_id);
-        
+
         console.log(paciente_id);
         console.log(dentista_id);
         console.log(tratamiento_id);
@@ -109,7 +111,7 @@ const createCita = async(req, res) => {
         console.log(typeof estado);
 
 
-        citaNueva = new cita({
+        citaNueva = new Cita({
             paciente_id,
             dentista_id,
             tratamiento_id,
@@ -127,10 +129,58 @@ const createCita = async(req, res) => {
     }
 };
 
+//Para obtener los dentistas para el select
+const getDentistas = async(req, res) => {
+    try {
+        const dentistas = await dentista.find();
+
+        if (dentistas.length === 0) {
+            return res
+                .status(404)
+                .send({ message: "No se han encontrado dentistas" });
+        }
+        return res.status(200).send(dentistas);
+    } catch (error) {
+        return res.status(400).send({ message: "No se realizó la búsqueda" });
+    }
+}
+
+//Para obtener los pacientes para el select
+const getPacientes = async(req, res) => {
+    try {
+        const pacientes = await paciente.find();
+
+        if (pacientes.length === 0) {
+            return res
+                .status(404)
+                .send({ message: "No se han encontrado pacientes" });
+        }
+        return res.status(200).send(pacientes);
+    } catch (error) {
+        return res.status(400).send({ message: "No se realizó la búsqueda" });
+    }
+}
+
+//Para obtener los dentistas para el select
+const getTratamientos = async(req, res) => {
+    try {
+        const tratamientos = await tratamiento.find();
+
+        if (tratamientos.length === 0) {
+            return res
+                .status(404)
+                .send({ message: "No se han encontrado tratamientos" });
+        }
+        return res.status(200).send(tratamientos);
+    } catch (error) {
+        return res.status(400).send({ message: "No se realizó la búsqueda" });
+    }
+}
+
 //Para mostrar las citas en la tabla
 const getCitas = async(req, res) => {
     try {
-        const citas = await cita.aggregate([{
+        const citas = await Cita.aggregate([{
                 $lookup: {
                     from: "pacientes",
                     localField: "paciente_id",
@@ -190,24 +240,60 @@ const getCitas = async(req, res) => {
     }
 };
 
-const updatecita = async(req, res) => {
+const updateCita = async(req, res) => {
     try {
-        const { id } = req.params;
 
-        const { direccion, edad, saldo } = req.body;
+        console.log("PRUEBA UPDATE");
+        var { id } = req.params;
 
-        await validarActualizacionDatos(edad, saldo, direccion);
+        var { paciente_id, dentista_id, tratamiento_id, fecha, hora, estado } = req.body;
 
-        const cita = await cita.findByIdAndUpdate(id, req.body, {
+        var _id_paciente = paciente_id;
+        var _id_dentista = dentista_id;
+        var _id_tratamiento = tratamiento_id;
+
+        //PACIENTE
+        paciente_id = await paciente.findOne({ nombre: _id_paciente }, { _id: 1 })
+        paciente_id = paciente_id._id;
+
+        //DENTISTA
+        dentista_id = await dentista.findOne({ nombre: _id_dentista }, { _id: 1 })
+        dentista_id = dentista_id._id;
+
+        //TRATAMIENTO
+        tratamiento_id = await tratamiento.findOne({ nombre: _id_tratamiento }, { _id: 1 })
+        tratamiento_id = tratamiento_id._id;
+
+        console.log("Este es el id que llega");
+        console.log(id);
+
+        console.log("Lo transformamos a ObjectId")
+        const { ObjectId } = require("mongodb");
+
+        // id = new ObjectId(id)
+        // console.log(typeof id);
+        // console.log(id);
+
+        var query = await Cita.findByIdAndUpdate (id, {
+            paciente_id: paciente_id,
+            dentista_id: dentista_id,
+            tratamiento_id: tratamiento_id,
+            fecha: fecha,
+            hora: hora,
+            estado: estado,
+        }, {
             new: true,
         });
 
-        if (!cita) {
-            return res.status(404).send({ message: "No se encontró el cita" });
+        console.log(query);
+        
+        if (!query) {
+            return res.status(404).send({ message: "No se encontró la cita" });
         }
 
-        return res.status(201).send(cita);
-    } catch (error) {
+        return res.status(201).send(query);
+    }  catch (error) {
+        console.log("Ocurrió un error:", error.message);
         return res.status(400).send({ message: error.message });
     }
 };
@@ -216,7 +302,7 @@ const updatecita = async(req, res) => {
 const deleteCita = async(req, res) => {
     try {
         const { id } = req.params;
-        const citas = await cita.findByIdAndDelete(id);
+        const citas = await Cita.findByIdAndDelete(id);
 
         if (!citas) {
             return res.status(404).send({ message: "No se encontró la cita" });
@@ -261,8 +347,11 @@ const buscarPorNombre = async(req, res) => {
 module.exports = {
     createCita,
     getCitas,
-    // updatecita,
+    updateCita,
     deleteCita,
+    getDentistas,
+    getPacientes,
+    getTratamientos,
     // buscarPorRut,
     // buscarPorNombre,
 };

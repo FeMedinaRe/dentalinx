@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Schema.Types.ObjectId;
-//constructor para generar el schema
 const Schema = mongoose.Schema;
 
 const citaSchema = new Schema({
 
     //Pasamos la estructura JSON que define el documento
-    
+    // _id: {
+    //   type: ObjectId,
+    //   required: true,
+    // },
     paciente_id: {
       type: ObjectId,
       required: true,
