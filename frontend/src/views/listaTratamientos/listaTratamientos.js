@@ -147,62 +147,57 @@ export default function TableList() {
 
   const classes = useStyles();
 
-  const [clinicaEdit, setClinicaEdit] = useState({
-    tratamiento: "",
+  const [tratamientoEdit, setTratamientoEdit] = useState({
+    nombre: "",
     costo:"",
     descripcion: "",
     duracion: "",    
   });
 
   const onCambio = (e) => {
-    setClinicaEdit({
-      ...clinicaEdit,
+    setTratamientoEdit({
+      ...tratamientoEdit,
       [e.target.name]: e.target.value,
     });
   };
 
   const dialogEditarEliminar = (event, row) => {
     console.log(row.original.nombre);
-    setClinicaEdit({
+    setTratamientoEdit({
       _id: row.original._id,
-      rutClinica: row.original.rutClinica,
-      nombreClinica: row.original.nombreClinica,
-      direccionClinica: row.original.direccionClinica,
-      correoClinica: row.original.correoClinica,
-      rutDueno: row.original.rutDueno,
-      telefono: row.original.telefono
-      
+      nombre: row.original.nombre,
+      costo: row.original.costo,
+      descripcion: row.original.descripcion,
+      duracion: row.original.duracion,      
     });
   };
 
   const handleDeleteRow = async () => {
     try {
       axios.delete(
-        `http://localhost:3001/api/deleteClinica/${clinicaEdit._id}`
+        `http://localhost:3001/api/Tratamiento/${tratamientoEdit._id}`
       );
       window.location.reload();
     } catch (error) {
-      setError("Ocurrió un error al eliminar la clinica.");
+      setError("Ocurrió un error al eliminar el tratamiento.");
     }
   };
 
   const [error, setError] = useState(null);
 
   const handleSubmit = async (event, row) => {
-    console.log(clinicaEdit);
+    console.log(tratamientoEdit);
     try {
       const response = await axios.put(
-        `http://localhost:3001/api/clinica/${clinicaEdit._id}`,
-        clinicaEdit
+        `http://localhost:3001/api/tratamiento/${tratamientoEdit._id}`,
+        tratamientoEdit
       );
 
       console.log(response.data);
       setOpenEditar(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      setTimeout(() => {window.location.reload();}, 500);
     } catch (err) {
-      setError("Ocurrió un error al actualizar los datos e la clinica.");
+      setError("Ocurrió un error al actualizar los datos del tratamiento.");
     }
 ate  };
 
@@ -211,8 +206,8 @@ ate  };
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="primary">
-            <h4 className={classes.cardTitleWhite}> Clinca</h4>
-            <div> Total de Clinicas: {tableData.length} </div>
+            <h4 className={classes.cardTitleWhite}> Tratamientos</h4>
+            <div> Total de Tratamientos: {tableData.length} </div>
           </CardHeader>
           <CardBody>
             <div className={classes.inputContainer}>
@@ -305,7 +300,7 @@ ate  };
                         open={openEditar}
                         onClose={() => setOpenEditar(true)}
                       >
-                        <DialogTitle>Editar Clinica</DialogTitle>
+                        <DialogTitle>Editar Tratamiento</DialogTitle>
                         <DialogContent>
                           <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -315,7 +310,7 @@ ate  };
                                 label="Nombre"
                                 name="nombre"
                                 variant="outlined"
-                                defaultValue={clinicaEdit.nombreClinica}
+                                defaultValue={tratamientoEdit.nombre}
                                 InputProps={{
                                   readOnly: true,
                                 }}
@@ -327,7 +322,7 @@ ate  };
                                 label="Rut"
                                 name="rut"
                                 variant="outlined"
-                                defaultValue={clinicaEdit.rutClinica}
+                                defaultValue={tratamientoEdit.costo}
                                 InputProps={{
                                   readOnly: true,
                                 }}
@@ -339,7 +334,7 @@ ate  };
                                 label="telefono"
                                 name="telefono"
                                 variant="outlined"
-                                defaultValue={clinicaEdit.telefono}
+                                defaultValue={tratamientoEdit.descripcion}
                                 onChange={onCambio}
                               />
                             </Grid>
@@ -349,17 +344,7 @@ ate  };
                                 label="Dirección"
                                 name="direccion"
                                 variant="outlined"
-                                defaultValue={clinicaEdit.direccionClinica}
-                                onChange={onCambio}
-                              />
-                            </Grid>
-                            <Grid item xs={12}>
-                              <TextField
-                                fullWidth
-                                label="correo"
-                                name="correoClinica"
-                                variant="outlined"
-                                defaultValue={clinicaEdit.correoClinica}
+                                defaultValue={tratamientoEdit.duracion}
                                 onChange={onCambio}
                               />
                             </Grid>
@@ -379,13 +364,7 @@ ate  };
                           >
                             Cancelar
                           </Button>
-                          <Button
-                            color="primary"
-                            variant="contained"
-                            onClick={(event) => {
-                              handleSubmit(event, row);
-                            }}
-                          >
+                          <Button color="primary" variant="contained" onClick={(event) => {handleSubmit(event, row);}}>
                             Guardar
                           </Button>
                         </DialogActions>
