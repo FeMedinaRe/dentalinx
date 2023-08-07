@@ -52,10 +52,12 @@ const useStyles = makeStyles(styles);
 
 export default function UserProfile() {
   const [values, setValues] = useState({
-    nombre: "",
-    costo: "",
-    descripcion: "",
-    duracion: "",
+    nombreClinica: "",
+    rutClinica: "",
+    direccionClinica: "",
+    correoClinica: "",
+    telefono: "",
+    rutDueno: "",
   });
 
 
@@ -76,14 +78,14 @@ export default function UserProfile() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/tratamiento",
+        "http://localhost:3001/api/clinica",
         values
       );
 
       if (response.status === 201) {
         Swal.fire({
-          title: "Tratamiento guardado",
-          text: "El tratamiento ha sido guardado de forma exitosa",
+          title: "Clinica Guardada",
+          text: "La clinica ha sido guardado exitosamente",
           icon: "success",
           confirmButtonText: "Aceptar",
         });
@@ -109,14 +111,14 @@ export default function UserProfile() {
         <GridItem xs={12} sm={12} md={11}>
           <Card>
             <CardHeader color="primary" position="relative">
-              <h4 className={classes.cardTitleWhite}>Registar Tratamiento Dental</h4>
+              <h4 className={classes.cardTitleWhite}>Registar Clinica Dental</h4>
             </CardHeader>
             <CardBody>
               <Box display="flex" height="100%" marginTop={3}>
                 <GridItem item xs={12} sm={6} md={4}>
                   <TextField
-                    label="Nombre Tratamiento"
-                    id="nombre"
+                    label="Nombre Clinica"
+                    id="nombreClinica"
                     type="text"
                     fullWidth
                     onChange={onChange}
@@ -124,8 +126,8 @@ export default function UserProfile() {
                 </GridItem>
                 <GridItem item xs={12} sm={6} md={4}>
                   <TextField
-                    label="Valor del tratamiento"
-                    id="costo"
+                    label="Rut Clinica"
+                    id="rutClinica"
                     type="text"
                     onChange={onChange}
                     fullWidth
@@ -135,8 +137,8 @@ export default function UserProfile() {
               <Box display="flex" height="100%" marginTop={5}>
                 <GridItem xs={12} sm={12} md={4}>
                   <TextField
-                    label="Descripcion del Tratamiento"
-                    id="descripcion"
+                    label="Correo Clinica"
+                    id="correoClinica"
                     type="text"
                     onChange={onChange}
                     fullWidth
@@ -144,8 +146,17 @@ export default function UserProfile() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <TextField
-                    label="Duración del Tratamiento"
-                    id="duracion"
+                    label="Rut Dueño"
+                    id="rutDueno"
+                    type="text"
+                    onChange={onChange}
+                    fullWidth
+                  />
+                </GridItem>
+                <GridItem item xs={12} sm={6} md={4}>
+                  <TextField
+                    label="Telefono"
+                    id="telefono"
                     type="text"
                     onChange={onChange}
                     fullWidth
@@ -153,6 +164,22 @@ export default function UserProfile() {
                 </GridItem>
               </Box>
               <Box display="flex" height="100%" marginTop={3}></Box>
+              <Box display="flex" height="100%" marginTop={3}>
+                <GridItem xs={12} sm={12} md={5}>
+                  <InputLabel>Direccion</InputLabel>
+                  <TextField
+                    id="direccionClinica"
+                    type="text"
+                    onChange={onChange}
+                    multiline
+                    fullWidth
+                    inputProps={{
+                      multiline: true,
+                      rows: 2,
+                    }}
+                  />
+                </GridItem>
+              </Box>
             </CardBody>
             <CardFooter>
               <Button color="primary" onClick={handleSubmit}>
