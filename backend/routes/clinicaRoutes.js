@@ -5,7 +5,7 @@ const api = express.Router();
 api.post("/clinica", clinicaController.createClinica);
 api.get("/clinicas", clinicaController.getClinicas);
 api.put("/clinica/:id", clinicaController.updateClinica);
-api.delete("/Clinica/:id", clinicaController.deleteClinica);
+api.delete("/deleteClinica/:id", clinicaController.deleteClinica);
 api.get("/clinicaPorRut/:rut", clinicaController.buscarPorRutClinica);
 api.get("/clinicaPorNombre/:nombre", clinicaController.buscarPorNombreClinica);
 
