@@ -31,8 +31,12 @@ import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
+<<<<<<< HEAD
 import registrarTratamiento from "views/registrarTratamiento/registrarTratamiento.js";
 import listadoTratamientos from "views/listaTratamientos/listaTratamientos.js";
+=======
+import Clinicas from "views/ListadoClinicas/Clinicas.js";
+>>>>>>> ec562b09117754ec941182175fc1474b5795d636
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -94,10 +98,10 @@ const dashboardRoutes = [
     layout: "/admin",
   },
   {
-    path: "/maps",
-    name: "Maps",
+    path: "/clinicas",
+    name: "Listado Clinicas",
     icon: LocationOn,
-    component: Maps,
+    component: Clinicas,
     layout: "/admin",
   },
   {
