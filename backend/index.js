@@ -6,6 +6,7 @@ const app = express();
 dotenv.config();
 
 const pacienteRoutes = require('./routes/pacienteRoutes');
+const practicanteRoutes = require('./routes/practicanteRoutes');
 const inventarioRoutes = require('./routes/inventarioRoutes');
 const citaRoutes = require('./routes/citaRoutes');
 
@@ -16,6 +17,7 @@ app.options('', cors());
 app.use('/api', pacienteRoutes);
 app.use('/api', inventarioRoutes);
 app.use('/api', citaRoutes);
+app.use('/api', practicanteRoutes);
 
 mongoose.connect('mongodb+srv://Juan:juan1234@dentalinx.sz8at8j.mongodb.net/')
     .then(() => {

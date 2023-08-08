@@ -32,6 +32,7 @@ import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
+import practicante from "views/practicante/registro_practicante.js";
 
 // core components/views for RTL layout
 
@@ -96,6 +97,13 @@ const dashboardRoutes = [{
         name: "Reservar Cita",
         icon: Notifications,
         component: ReserveAttention,
+        layout: "/admin",
+    },
+    {
+        path: "/practicante",
+        name: "practicante",
+        icon: Person,
+        component: practicante,
         layout: "/admin",
     },
 ];
