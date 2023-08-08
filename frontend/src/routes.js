@@ -49,7 +49,7 @@ const dashboardRoutes = [
     path: "/registroPacientes",
     name: "Registrar Pacientes",
     icon: Person,
-    component: Maps,
+    component: RegistroPacientes,
     layout: "/admin",
   }, 
   {
