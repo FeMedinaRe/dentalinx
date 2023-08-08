@@ -35,11 +35,14 @@ import { Button } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+
+import Visibility from "@material-ui/icons/Visibility";
 import TablePagination from "@material-ui/core/TablePagination";
 import InputLabel from "@material-ui/core/InputLabel";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./DatePickerStyles.css";
+import "./tabla.css";
 
 const styles = {
   cardCategoryWhite: {
@@ -133,6 +136,50 @@ export default function TableList() {
 
   const [openEliminar, setOpenEliminar] = useState(false);
   const [openEditar, setOpenEditar] = useState(false);
+  const [openCitas, setopenCitas] = useState(false);
+
+  const [citasMedicas, setCitasMedicas] = useState([]);
+
+  const getCitasMedicas = async (event, row) => {
+    dialogEditarEliminar(event, row);
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/api/citasxPaciente/${pacienteEdit._id}`
+      );
+
+      // Establece los datos de las citas en el estado
+      setCitasMedicas(response.data);
+      setopenCitas(true); // Muestra el diálogo después de obtener las citas
+    } catch (error) {
+      console.error("Error al obtener las citas médicas:", error);
+    }
+  };
+
+  const [pacienteEdit, setPacienteEdit] = useState({
+    edad: "",
+    direccion: "",
+    correo: "",
+    fechaIngreso: "",
+    fechaNacimiento: "",
+    sexo: "",
+    historiaClinica: "",
+  });
+
+  const dialogEditarEliminar = (event, row) => {
+    setPacienteEdit({
+      _id: row.original._id,
+      rut: row.original.rut,
+      nombre: row.original.nombre,
+      edad: row.original.edad,
+      direccion: row.original.direccion,
+      correo: row.original.correo,
+      fechaIngreso: row.original.fechaIngreso,
+      fechaNacimiento: row.original.fechaNacimiento,
+      sexo: row.original.sexo,
+      historiaClinica: row.original.historiaClinica,
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -143,9 +190,9 @@ export default function TableList() {
         console.error(error);
       }
     };
-
+    console.log(citasMedicas);
     fetchData();
-  }, []);
+  }, [citasMedicas]);
 
   const table = useReactTable({
     data: tableData,
@@ -160,16 +207,6 @@ export default function TableList() {
 
   const classes = useStyles();
 
-  const [pacienteEdit, setPacienteEdit] = useState({
-    edad: "",
-    direccion: "",
-    correo: "",
-    fechaIngreso: "",
-    fechaNacimiento: "",
-    sexo: "",
-    historiaClinica: "",
-  });
-
   const updateSelect = (e) => {
     pacienteEdit.sexo = e.target.value;
   };
@@ -178,21 +215,6 @@ export default function TableList() {
     setPacienteEdit({
       ...pacienteEdit,
       [e.target.name]: e.target.value,
-    });
-  };
-
-  const dialogEditarEliminar = (event, row) => {
-    setPacienteEdit({
-      _id: row.original._id,
-      rut: row.original.rut,
-      nombre: row.original.nombre,
-      edad: row.original.edad,
-      direccion: row.original.direccion,
-      correo: row.original.correo,
-      fechaIngreso: row.original.fechaIngreso,
-      fechaNacimiento: row.original.fechaNacimiento,
-      sexo: row.original.sexo,
-      historiaClinica: row.original.historiaClinica,
     });
   };
 
@@ -532,6 +554,42 @@ export default function TableList() {
                               Guardar
                             </Button>
                           </DialogActions>
+                        </Dialog>
+
+                        {/* <Button
+                          color="primary"
+                          variant="contained"
+                          onClick={() => {
+                            getCitasMedicas(event, row);
+                            setopenCitas(true);
+                          }}
+                        >
+                          <Visibility />
+                        </Button> */}
+
+                        <Dialog
+                          open={openCitas}
+                          onClose={() => setopenCitas(false)}
+                        >
+                          <DialogTitle>Citas médicas del paciente</DialogTitle>
+                          <DialogContent>
+                            <table className="citas-table">
+                              <thead>
+                                <tr>
+                                  <th>Fecha</th>
+                                  <th>Hora</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {citasMedicas.map((cita, index) => (
+                                  <tr key={index}>
+                                    <td>{cita.fecha}</td>
+                                    <td>{cita.hora}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </DialogContent>
                         </Dialog>
                       </TableCell>
                     </TableRow>

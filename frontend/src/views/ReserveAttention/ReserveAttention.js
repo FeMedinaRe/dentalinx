@@ -12,10 +12,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
+import InputLabel from "@mui/material/InputLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
 import axios from "axios";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -41,7 +41,7 @@ import EditIcon from "@material-ui/icons/Edit";
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import moment from 'moment';
+import moment from "moment";
 
 // Estilos de la página
 const styles = {
@@ -81,7 +81,7 @@ const styles = {
     padding: "8px",
     borderRadius: "4px",
     border: `1px solid`,
-    marginRight: "20px", 
+    marginRight: "20px",
     fontSize: "14px",
     color: "#777",
     outline: "none",
@@ -134,7 +134,7 @@ export default function TableList() {
     },
     {
       accessorKey: "hora",
-      header: () => <span>Hora</span>,  
+      header: () => <span>Hora</span>,
     },
     {
       accessorKey: "estado",
@@ -156,36 +156,41 @@ export default function TableList() {
       try {
         const response = await axios.get("http://localhost:3001/api/citas");
 
-        response.data.map((option) => (
-          option.fecha = new Date(option.fecha).toLocaleDateString('es-ES')
-        )
-        )
+        response.data.map(
+          (option) =>
+            (option.fecha = new Date(option.fecha).toLocaleDateString("es-ES"))
+        );
         setTableData(response.data);
 
-       const responsePaciente = await axios.get("http://localhost:3001/api/citaPacientes");
-       const fetchedOptions  = [
-        ...new Set(responsePaciente.data.map((item) => item.nombre)),
-       ];
+        const responsePaciente = await axios.get(
+          "http://localhost:3001/api/citaPacientes"
+        );
+        const fetchedOptions = [
+          ...new Set(responsePaciente.data.map((item) => item.nombre)),
+        ];
 
-       setOptionPaciente(fetchedOptions);
+        setOptionPaciente(fetchedOptions);
 
-       const responseDentista = await axios.get("http://localhost:3001/api/citaDentistas");
+        const responseDentista = await axios.get(
+          "http://localhost:3001/api/citaDentistas"
+        );
 
         //Sacamos los nombres de los dentistas y lo agregamos a fetchedOptionDentista
-        const fetchedOptionDentista  = [
+        const fetchedOptionDentista = [
           ...new Set(responseDentista.data.map((item) => item.nombre)),
         ];
         setOptionDentista(fetchedOptionDentista);
 
         //Sacamos los nombres de los tratamientos y lo agregamos a fetchedOptionTratamiento
 
-        const responseTratamientos = await axios.get("http://localhost:3001/api/citaTratamientos");
+        const responseTratamientos = await axios.get(
+          "http://localhost:3001/api/citaTratamientos"
+        );
 
-        const fetchedOptionTratamiento  = [
+        const fetchedOptionTratamiento = [
           ...new Set(responseTratamientos.data.map((item) => item.nombre)),
         ];
         setOptionTratamiento(fetchedOptionTratamiento);
-
       } catch (error) {
         console.error(error);
       }
@@ -197,22 +202,21 @@ export default function TableList() {
   const table = useReactTable({
     data: tableData,
     columns,
-    state: { globalFilter, pageIndex: currentPage, pageSize
-    },
+    state: { globalFilter, pageIndex: currentPage, pageSize },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  // Para aplicar los estilos 
+  // Para aplicar los estilos
   const classes = useStyles();
 
   const inputDateStyles = {
-    width: '99%',
-    height: '30px',
-    fontSize: '16px',
-    padding: '5px 0px 5px 5px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
+    width: "99%",
+    height: "30px",
+    fontSize: "16px",
+    padding: "5px 0px 5px 5px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
   };
 
   const [hovered, setHovered] = useState(false);
@@ -226,36 +230,35 @@ export default function TableList() {
   };
 
   const buttonStyle = {
-    backgroundColor: hovered ? '#056974' : '#00acc1',
-    border: '1px solid #00acc1',
-    color: 'white',
-    padding: '15px 32px',
-    textAlign: 'center',
-    textDecoration: 'none',
-    display: 'inline-block',
-    fontSize: '16px',
-    cursor: 'pointer',
-    float: 'left',
-    marginRight: '5px',
-    borderRadius: '5px',
-    };
+    backgroundColor: hovered ? "#056974" : "#00acc1",
+    border: "1px solid #00acc1",
+    color: "white",
+    padding: "15px 32px",
+    textAlign: "center",
+    textDecoration: "none",
+    display: "inline-block",
+    fontSize: "16px",
+    cursor: "pointer",
+    float: "left",
+    marginRight: "5px",
+    borderRadius: "5px",
+  };
 
   // useState de la Cita medica
   const [editCitaMedica, setEditCitaMedica] = useState({
     paciente_id: "",
-    dentista_id:"",
-    tratamiento_id:"",
+    dentista_id: "",
+    tratamiento_id: "",
     fecha: "",
     hora: "",
     estado: "",
   });
 
   const FormateoFecha = (fechaTabla) => {
-    const momentDate = moment(fechaTabla, 'DD-MM-YYYY').format('YYYY-MM-DD');
-  
-  return momentDate;
-  }
+    const momentDate = moment(fechaTabla, "DD-MM-YYYY").format("YYYY-MM-DD");
 
+    return momentDate;
+  };
 
   const onCambio = (e) => {
     const { name, value } = e.target;
@@ -281,7 +284,7 @@ export default function TableList() {
     fecha: "",
     hora: "",
     estado: "",
-  })
+  });
 
   const crear = async (event) => {
     if (!citaCrear.fecha || !citaCrear.hora || !citaCrear.estado) {
@@ -290,7 +293,9 @@ export default function TableList() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/api/cita",citaCrear
+      const response = await axios.post(
+        "http://localhost:3001/api/cita",
+        citaCrear
       );
       setOpenCitaAgregar(false);
       setTimeout(() => {
@@ -315,9 +320,9 @@ export default function TableList() {
   const dialogEliminar = (row) => {
     setCitaEliminar({
       _id: row.original._id,
-      paciente_id : row.original.paciente_id,
-      dentista_id : row.original.dentista_id,
-      tratamiento_id : row.original.tratamiento_id,
+      paciente_id: row.original.paciente_id,
+      dentista_id: row.original.dentista_id,
+      tratamiento_id: row.original.tratamiento_id,
       fecha: row.original.fecha,
       hora: row.original.hora,
       estado: row.original.estado,
@@ -348,11 +353,10 @@ export default function TableList() {
 
   const handleSubmit = async (event, rowID) => {
     try {
-
       console.log(editCitaMedica);
       const response = await axios.put(
         `http://localhost:3001/api/cita/${editCitaMedica._id}`,
-         editCitaMedica
+        editCitaMedica
       );
       setOpenCitaEditar(false);
       setTimeout(() => {
@@ -381,9 +385,8 @@ export default function TableList() {
           </CardHeader>
           <CardBody>
             <div className={classes.inputContainer}>
-
-            {/*SECCION AGREGAR*/}
-            <button
+              {/*SECCION AGREGAR*/}
+              <button
                 // color="primary"
                 style={buttonStyle}
                 onMouseEnter={handleMouseEnter}
@@ -393,9 +396,12 @@ export default function TableList() {
                 }}
               >
                 Nueva Cita
-                
               </button>
-              <Dialog disableEnforceFocus open={openCitaAgregar} onClose={() => setOpenCitaAgregar(true)}>
+              <Dialog
+                disableEnforceFocus
+                open={openCitaAgregar}
+                onClose={() => setOpenCitaAgregar(true)}
+              >
                 <DialogTitle style={{ textAlign: "center" }}>
                   {" "}
                   Reservar atención{" "}
@@ -403,76 +409,86 @@ export default function TableList() {
                 <DialogContent>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Paciente</InputLabel>
-                            <Select name="paciente_id" 
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              defaultValue = ""
-                              onChange={handleChange}
-                              >
-                                {optionPaciente.map((option,id) => (
-
-                                    <MenuItem key={id} value={option}>
-                                      {option}
-                                    </MenuItem>)
-                                )}
-                            </Select>
-                    </FormControl>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Paciente
+                        </InputLabel>
+                        <Select
+                          name="paciente_id"
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          defaultValue=""
+                          onChange={handleChange}
+                        >
+                          {optionPaciente.map((option, id) => (
+                            <MenuItem key={id} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Dentista</InputLabel>
-                            <Select name="dentista_id" 
-                              labelId="demo-simple-select-helper-label"
-                              id="demo-simple-select-helper"
-                              defaultValue=""
-                              onChange={handleChange}>
-                                {optionDentista.map((option,id) => (
-                                  <MenuItem key={id} value={option}>
-                                   {option}
-                                  </MenuItem>)
-                                  )}
-                            </Select>
-                    </FormControl>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Dentista
+                        </InputLabel>
+                        <Select
+                          name="dentista_id"
+                          labelId="demo-simple-select-helper-label"
+                          id="demo-simple-select-helper"
+                          defaultValue=""
+                          onChange={handleChange}
+                        >
+                          {optionDentista.map((option, id) => (
+                            <MenuItem key={id} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Tratamiento</InputLabel>
-                            <Select name="tratamiento_id" 
-                              labelId="demo-simple-select-helper-label"
-                              id="demo-simple-select-helper"
-                              defaultValue=""
-                              onChange={handleChange}>
-                                {optionTratamiento.map((option,id) => (
-                                    <MenuItem key={id} value={option}>
-                                      {option}
-                                    </MenuItem>)
-                                )}
-                            </Select>
-                    </FormControl>
+                      <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">
+                          Tratamiento
+                        </InputLabel>
+                        <Select
+                          name="tratamiento_id"
+                          labelId="demo-simple-select-helper-label"
+                          id="demo-simple-select-helper"
+                          defaultValue=""
+                          onChange={handleChange}
+                        >
+                          {optionTratamiento.map((option, id) => (
+                            <MenuItem key={id} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12}>
                       <input
-                        type="date" 
-                        required        
+                        type="date"
+                        required
                         label="Fecha"
                         name="fecha"
                         variant="outlined"
                         defaultValue=""
                         onChange={handleChange}
-                        style = {inputDateStyles}
+                        style={inputDateStyles}
                       />
                     </Grid>
                     <Grid item xs={12}>
-                    {/* <LocalizationProvider >
+                      {/* <LocalizationProvider >
                       <DemoContainer components={['TimePicker']}>
                         <TimePicker onChange={handleChange} label="Selecciona la hora" />
                       </DemoContainer>
                     </LocalizationProvider> */}
                       <input
                         required
-                        style={inputDateStyles}                   
+                        style={inputDateStyles}
                         type="time"
                         label="Hora"
                         name="hora"
@@ -483,8 +499,12 @@ export default function TableList() {
                     </Grid>
                     <Grid item xs={12}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Estado</InputLabel>
-                        <Select name ="estado" required
+                        <InputLabel id="demo-simple-select-label">
+                          Estado
+                        </InputLabel>
+                        <Select
+                          name="estado"
+                          required
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
                           defaultValue=""
@@ -561,189 +581,214 @@ export default function TableList() {
                 ))}
               </TableHead>
               <TableBody>
-              {table
+                {table
                   .getRowModel()
                   .rows.slice(
                     currentPage * pageSize,
                     (currentPage + 1) * pageSize
-                  ).map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                    <TableCell className={classes.buttonContainer}>
-                      <Button
-                        color="secondary"
-                        onClick={() => {
-                          dialogEliminar(row);
-                          setOpenCitaEliminar(true);
-                        }}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                      <Dialog
-                        open={openCitaEliminar}
-                        onClose={() => setOpenCitaEliminar(true)}
-                      >
-                        <DialogTitle>¿Está seguro que desea eliminar la cita?</DialogTitle>
-                        <DialogContent>
-                          <Typography variant="body1">
-                            Esta acción eliminará permanentemente los datos.
-                          </Typography>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={() => setOpenCitaEliminar(false)}
-                            color="secondary"
-                          >
-                            Cancelar
-                          </Button>
-                          <Button
-                            color="primary"
-                            style={{ color: "white", backgroundColor: "red" }}
-                            onClick={(event) => handleDeleteRow(event)}
-                          >
-                            Eliminar
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                      {/*SECCION EDITAR*/}
-                      <Button
-                        color="primary"
-                        onClick={(event) => {
-                          dialogEditar(event, row);
-                          setOpenCitaEditar(true);
-                        }}
-                      >
-                        <EditIcon />
-                      </Button>
-                      <Dialog disableEnforceFocus open={openCitaEditar} onClose={() => setOpenCitaEditar(true)}>
-                        <DialogTitle>Editar Cita</DialogTitle>
-                        <DialogContent>
-                          <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                              
-                              <FormControl fullWidth>
-                                  <InputLabel id="demo-simple-select-label">Paciente</InputLabel>
-                                      <Select name="paciente_id" 
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        defaultValue = {editCitaMedica.paciente_id}
-                                        onChange={onCambio}
-                                        >
-                                          {optionPaciente.map((option,id) => (
-
-                                              <MenuItem key={id} value={option}>
-                                                {option}
-                                              </MenuItem>)
-                                          )}
-                                      </Select>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <FormControl fullWidth>
-                                  <InputLabel id="demo-simple-select-label">Dentista</InputLabel>
-                                      <Select name="dentista_id" 
-                                        labelId="demo-simple-select-helper-label"
-                                        id="demo-simple-select-helper"
-                                        defaultValue={editCitaMedica.dentista_id}
-                                        onChange={onCambio}>
-                                          {optionDentista.map((option,id) => (
-                                            <MenuItem key={id} value={option}>
-                                            {option}
-                                            </MenuItem>)
-                                            )}
-                                      </Select>
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Tratamiento</InputLabel>
-                                    <Select name="tratamiento_id" 
-                                      labelId="demo-simple-select-helper-label"
-                                      id="demo-simple-select-helper"
-                                      defaultValue={editCitaMedica.tratamiento_id}
-                                      onChange={onCambio}>
-                                        {optionTratamiento.map((option,id) => (
-                                            <MenuItem key={id} value={option}>
-                                              {option}
-                                            </MenuItem>)
-                                        )}
-                                    </Select>
-                            </FormControl>
-                            </Grid>
-                            <Grid item xs={12}>
-                            <input
-                              type="date" 
-                              required        
-                              label="Fecha"
-                              name="fecha"
-                              variant="outlined"
-                              defaultValue={FormateoFecha(editCitaMedica.fecha)}
-                              onChange={onCambio}
-                              style = {inputDateStyles}
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                          <input
-                              type="time" 
-                              required        
-                              label="Hora"
-                              name="hora"
-                              variant="outlined"
-                              defaultValue={editCitaMedica.hora}
-                              onChange={onCambio}
-                              style = {inputDateStyles}
-                            />
-                          </Grid>
-                          <Grid item xs={12}>
-                          <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Estado</InputLabel>
-                        <Select name ="estado"
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          defaultValue={editCitaMedica.estado}
-                          onChange={handleChange}
-                        >
-                          <MenuItem value={"Agendada"}>Agendada</MenuItem>
-                          <MenuItem value={"Finalizada"}>Finalizada</MenuItem>
-                        </Select>
-                      </FormControl>
-                          </Grid>
-                          </Grid>{" "}
-                          {error && (
-                            <DialogContentText color="error">
-                              {" "}
-                              {error}{" "}
-                            </DialogContentText>
+                  )
+                  .map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
                           )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={() => {
-                              setOpenCitaEditar(false);
-                              setError(null);
-                            }}
-                          >
-                            Cancelar
-                          </Button>
-                          <Button
-                            color="primary"
-                            variant="contained"
-                            onClick={(event) => handleSubmit(event, row)}
-                          >
-                            Guardar
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        </TableCell>
+                      ))}
+                      <TableCell className={classes.buttonContainer}>
+                        <Button
+                          color="secondary"
+                          onClick={() => {
+                            dialogEliminar(row);
+                            setOpenCitaEliminar(true);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </Button>
+                        <Dialog
+                          open={openCitaEliminar}
+                          onClose={() => setOpenCitaEliminar(true)}
+                        >
+                          <DialogTitle>
+                            ¿Está seguro que desea eliminar la cita?
+                          </DialogTitle>
+                          <DialogContent>
+                            <Typography variant="body1">
+                              Esta acción eliminará permanentemente los datos.
+                            </Typography>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              onClick={() => setOpenCitaEliminar(false)}
+                              color="secondary"
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              color="primary"
+                              style={{ color: "white", backgroundColor: "red" }}
+                              onClick={(event) => handleDeleteRow(event)}
+                            >
+                              Eliminar
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                        {/*SECCION EDITAR*/}
+                        <Button
+                          color="primary"
+                          onClick={(event) => {
+                            dialogEditar(event, row);
+                            setOpenCitaEditar(true);
+                          }}
+                        >
+                          <EditIcon />
+                        </Button>
+                        <Dialog
+                          disableEnforceFocus
+                          open={openCitaEditar}
+                          onClose={() => setOpenCitaEditar(true)}
+                        >
+                          <DialogTitle>Editar Cita</DialogTitle>
+                          <DialogContent>
+                            <Grid container spacing={2}>
+                              <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                  <InputLabel id="demo-simple-select-label">
+                                    Paciente
+                                  </InputLabel>
+                                  <Select
+                                    name="paciente_id"
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    defaultValue={editCitaMedica.paciente_id}
+                                    onChange={onCambio}
+                                  >
+                                    {optionPaciente.map((option, id) => (
+                                      <MenuItem key={id} value={option}>
+                                        {option}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                  <InputLabel id="demo-simple-select-label">
+                                    Dentista
+                                  </InputLabel>
+                                  <Select
+                                    name="dentista_id"
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    defaultValue={editCitaMedica.dentista_id}
+                                    onChange={onCambio}
+                                  >
+                                    {optionDentista.map((option, id) => (
+                                      <MenuItem key={id} value={option}>
+                                        {option}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                  <InputLabel id="demo-simple-select-label">
+                                    Tratamiento
+                                  </InputLabel>
+                                  <Select
+                                    name="tratamiento_id"
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    defaultValue={editCitaMedica.tratamiento_id}
+                                    onChange={onCambio}
+                                  >
+                                    {optionTratamiento.map((option, id) => (
+                                      <MenuItem key={id} value={option}>
+                                        {option}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                              <Grid item xs={12}>
+                                <input
+                                  type="date"
+                                  required
+                                  label="Fecha"
+                                  name="fecha"
+                                  variant="outlined"
+                                  defaultValue={FormateoFecha(
+                                    editCitaMedica.fecha
+                                  )}
+                                  onChange={onCambio}
+                                  style={inputDateStyles}
+                                />
+                              </Grid>
+                              <Grid item xs={12}>
+                                <input
+                                  type="time"
+                                  required
+                                  label="Hora"
+                                  name="hora"
+                                  variant="outlined"
+                                  defaultValue={editCitaMedica.hora}
+                                  onChange={onCambio}
+                                  style={inputDateStyles}
+                                />
+                              </Grid>
+                              <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                  <InputLabel id="demo-simple-select-label">
+                                    Estado
+                                  </InputLabel>
+                                  <Select
+                                    name="estado"
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    defaultValue={editCitaMedica.estado}
+                                    onChange={handleChange}
+                                  >
+                                    <MenuItem value={"Agendada"}>
+                                      Agendada
+                                    </MenuItem>
+                                    <MenuItem value={"Finalizada"}>
+                                      Finalizada
+                                    </MenuItem>
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            </Grid>{" "}
+                            {error && (
+                              <DialogContentText color="error">
+                                {" "}
+                                {error}{" "}
+                              </DialogContentText>
+                            )}
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              onClick={() => {
+                                setOpenCitaEditar(false);
+                                setError(null);
+                              }}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              color="primary"
+                              variant="contained"
+                              onClick={(event) => handleSubmit(event, row)}
+                            >
+                              Guardar
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </CardBody>

@@ -9,8 +9,8 @@ api.get("/citaDentistas", citaController.getDentistas);
 api.get("/citaTratamientos", citaController.getTratamientos);
 api.put("/cita/:id", citaController.updateCita);
 api.delete("/deleteCita/:id", citaController.deleteCita);
+api.get("/citasxPaciente/:paciente_id", citaController.getCitasxPaciente);
 // api.get("/citaPorRut/:rut", citaController.buscarPorRut);
 // api.get("/citaPorNombre/:nombre", citaController.buscarPorNombre);
-
 
 module.exports = api;
