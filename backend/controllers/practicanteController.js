@@ -83,10 +83,11 @@ async function validarActualizacionDatos(
 }
 
 const getUniversidad = async (req, res) => {
+  console.log("universidadlog");
   try {
-    var [idcarrera] = rec.params;
-    const universidad = await Universidad.find({_id:{$in:Asociada.distinct("iduniversidad", {idcarrera:idcarrera})}})
-   
+    //var [idcarrera] = rec.params;
+    //const universidad = await Universidad.find({_id:{$in:Asociada.distinct("iduniversidad", {idcarrera:idcarrera})}})
+    const universidad = await Universidad.find();
     if (universidad.length === 0) {
       return res
         .status(404)
@@ -100,25 +101,28 @@ const getUniversidad = async (req, res) => {
 };
 
 const getCarrera = async (req, res) => {
-  console.log("console");
+  //console.log("console");
   try {
-    console.log(await carrera.find().exec());
-    // if (carrera.length === 0) {
-    //   return res
-    //     .status(404)
-    //     .send({ message: "No se han encontrado carreras registradas" });
-    // }
+    const carrera = await Carrera.find().exec()
+    //console.log(carrera);
+     if (carrera.length === 0) {
+       return res
+         .status(404)
+         .send({ message: "No se han encontrado carreras registradas" });
+     }
 
-    return res.status(200).send(null);
+    return res.status(200).send(carrera);
   } catch (error) {
     return res.status(400).send({ message: "No se realizó la búsqueda" });
   }
 };
 
 const createPracticante = async (req, res) => {
+  
   try {
     const { rut, nombre, correo, carrera, universidad } = req.body;
 
+    console.log(rut, nombre, correo, carrera, universidad)
     // await validarDatosPaciente(
     //   rut,
     //   nombre,

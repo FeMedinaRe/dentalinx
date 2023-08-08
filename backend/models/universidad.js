@@ -10,4 +10,4 @@ const universidadSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("universidad", universidadSchema);
+module.exports = mongoose.model("universidades", universidadSchema);

@@ -10,4 +10,4 @@ const carreraSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model("carrera", carreraSchema);
+module.exports = mongoose.model("carreras", carreraSchema);

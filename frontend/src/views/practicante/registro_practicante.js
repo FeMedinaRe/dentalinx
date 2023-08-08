@@ -35,6 +35,7 @@ import {
   useReactTable,
   getFilteredRowModel,
 } from "@tanstack/react-table";
+import { ca } from "date-fns/locale";
 
 // import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
@@ -141,10 +142,18 @@ export default function RegistroPracticante() {
         try {
           var response = await axios.get("http://localhost:3001/api/practicante");
           setTableData(response.data);
+
           response = await axios.get("http://localhost:3001/api/carrera");
-          setOptionCarrera(response); 
-          response = await axios.get(`http://localhost:3001/api/universidad/${carreraseleccionada._id}`);
-          setOptionUniversidad(response); 
+          var carreras = [
+            ...new Set(response.data.map((item) => item.nombre)),
+          ];
+          setOptionCarrera(carreras); 
+
+          response = await axios.get("http://localhost:3001/api/universidad");
+          var universidades = [
+            ...new Set(response.data.map((item) => item.nombre)),
+          ];
+          setOptionUniversidad(universidades);  
           
         } catch (error) {
           console.error(error);
@@ -172,6 +181,7 @@ export default function RegistroPracticante() {
 
 
   const Create = async () => {
+    
     try {
       const response = await api.post(`/`, values);
       setValues(false);
@@ -187,10 +197,12 @@ export default function RegistroPracticante() {
   const handleUniversidad = (e) => {
     const { name, value } = e.target;
     setUniversidadSeleccionada({ ...universidadseleccionada, [name]: value });
+    setValues({ ...universidadseleccionada, [name]: value }); 
   };
   const handleCarrera = (e) => {
     const { name, value } = e.target;
     setCarreraSeleccionada({ ...carreraseleccionada, [name]: value });
+    setValues({ ...universidadseleccionada, [name]: value }); 
   };  
 
 
