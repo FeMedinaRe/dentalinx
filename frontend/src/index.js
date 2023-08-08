@@ -15,10 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
-//import LoginForm from './components/LoginForm';
+// import LoginForm from "./views/Login/LoginForm";
 // core components
 import Admin from "layouts/Admin.js";
 

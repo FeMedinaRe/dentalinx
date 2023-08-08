@@ -50,14 +50,6 @@ const [values, setValues] = useState({
     sexo:""
 });
 
-/*
-const [fechaNacimiento, setFechaNacimiento] = useState(0);
-
-const handleFechaNacimientoChange = (fechaNacimiento) => {
-    setFechaNacimiento(fechaNacimiento);
-    values.fechaNacimiento = fechaNacimiento;
-};
-*/
 const updateSelect = (e) => {
     values.sexo = e.target.value;
 };
@@ -93,8 +85,6 @@ const handleSubmit = async (e) => {
         }, 2500);
     }
     } catch (err) {
-      // Mostrar el mensaje de error con Swal.fire
-      //console.log(err.response.data.message);
 
     Swal.fire({
         icon: "error",
@@ -132,55 +122,55 @@ return (
                     fullWidth
                 />
                 </GridItem>
-              </Box>
-              <Box display="flex" height="100%" marginTop={5}>
+            </Box>
+            <Box display="flex" height="100%" marginTop={5}>
                 <GridItem xs={12} sm={12} md={4}>
-                  <TextField
+                <TextField
                     label="Direccion"
                     id="direccion"
                     type="text"
                     onChange={onChange}
                     fullWidth
-                  />
+                />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
-                  <TextField
+                <TextField
                     label="Especialidad"
                     id="especialidad"
                     type="text"
                     onChange={onChange}
                     fullWidth
-                  />
+                />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={2}>
-                  <InputLabel>Sexo</InputLabel>
-                  <Select label="Sexo" onChange={updateSelect}>
+                <InputLabel>Sexo</InputLabel>
+                <Select label="Sexo" onChange={updateSelect}>
                     <MenuItem value="Masculino">Masculino</MenuItem>
                     <MenuItem value="Femenino">Femenino</MenuItem>
                     <MenuItem value="Otro">Otro</MenuItem>
-                  </Select>
+                </Select>
                 </GridItem>
-              </Box>
-              <Box display="flex" height="100%" marginTop={3}>
-              <GridItem xs={12} sm={12} md={4}>
-                  <TextField
+            </Box>
+            <Box display="flex" height="100%" marginTop={3}>
+            <GridItem xs={12} sm={12} md={4}>
+                <TextField
                     label="Correo"
                     id="correo"
                     type="text"
                     onChange={onChange}
                     fullWidth
-                  />
+                />
                 </GridItem>
-              </Box>
+            </Box>
             </CardBody>
             <CardFooter>
-              <Button color="primary" onClick={handleSubmit}>
+            <Button color="primary" onClick={handleSubmit}>
                 Guardar
-              </Button>
+            </Button>
             </CardFooter>
-          </Card>
+        </Card>
         </GridItem>
-      </GridContainer>
+    </GridContainer>
     </div>
-  );
+);
 }
