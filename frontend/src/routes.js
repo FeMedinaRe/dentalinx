@@ -19,7 +19,7 @@
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import LibraryBooks from "@material-ui/icons/LibraryBooks";
-import BubbleChart from "@material-ui/icons/BubbleChart";
+// import BubbleChart from "@material-ui/icons/BubbleChart";
 import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 //core components/views for Admin layout
@@ -27,14 +27,16 @@ import DashboardPage from "views/Dashboard/Dashboard.js";
 import RegistroPacientes from "views/Registro Pacientes/Registro Pacientes";
 import Pacientes from "views/Listado Pacientes/Pacientes";
 import Inventario from "views/Inventario/Inventario.js"; // INVENTARIO
-import Typography from "views/Typography/Typography.js";
-import Icons from "views/Icons/Icons.js";
-import Maps from "views/Maps/Maps.js";
-import NotificationsPage from "views/Notifications/Notifications.js";
+// import Icons from "views/Icons/Icons.js";
+// import Maps from "views/Maps/Maps.js";
+// import NotificationsPage from "views/Notifications/Notifications.js";
 import registrarTratamiento from "views/registrarTratamiento/registrarTratamiento.js";
 import listadoTratamientos from "views/listaTratamientos/listaTratamientos.js";
 import Clinicas from "views/ListadoClinicas/Clinicas.js";
 import RegistroClinicas from "views/RegistroClinicas/RegistroClinicas";
+import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
+import Profesionales from "views/Profesionales/Profesionales.js";
+import Profesional from "views/Profesional/Profesional.js";
 // core components/views for RTL layout
 
 const dashboardRoutes = [
@@ -94,7 +96,28 @@ const dashboardRoutes = [
     icon: "content_paste",
     component: Inventario,
     layout: "/admin",
-  }, 
+  },
+  {
+    path: "/reserveattention",
+    name: "Reservar Cita",
+    icon: Notifications,
+    component: ReserveAttention,
+    layout: "/admin",
+  },
+  {
+    path: "/Profesionales",
+    name: "Profesionales",
+    icon: LibraryBooks,
+    component: Profesionales,
+    layout: "/admin",
+  },
+  {
+    path: "/profesional",
+    name: "Registrar profesional",
+    icon: Person,
+    component: Profesional,
+    layout: "/admin",
+  },
  
 ];
 

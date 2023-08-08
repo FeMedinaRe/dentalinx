@@ -319,7 +319,7 @@ ate  };
                             <Grid item xs={12}>
                               <TextField
                                 fullWidth
-                                label="Rut"
+                                label="Costo"
                                 name="rut"
                                 variant="outlined"
                                 defaultValue={tratamientoEdit.costo}
@@ -331,7 +331,7 @@ ate  };
                             <Grid item xs={12}>
                               <TextField
                                 fullWidth
-                                label="telefono"
+                                label="Descripción"
                                 name="telefono"
                                 variant="outlined"
                                 defaultValue={tratamientoEdit.descripcion}
@@ -341,7 +341,7 @@ ate  };
                             <Grid item xs={12}>
                               <TextField
                                 fullWidth
-                                label="Dirección"
+                                label="Duración"
                                 name="direccion"
                                 variant="outlined"
                                 defaultValue={tratamientoEdit.duracion}

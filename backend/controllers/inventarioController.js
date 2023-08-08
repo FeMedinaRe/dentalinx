@@ -1,70 +1,6 @@
 const Inventario = require("../models/inventario");
 const Categoria = require("../models/categoria");
 
-// async function validarDatosPaciente(
-//   rut,
-//   nombre,
-//   direccion,
-//   edad,
-//   saldo,
-//   correo
-// ) {
-//   if (rut.length < 8 || rut.length > 12) {
-//     throw new Error("El rut es incorrecto");
-//   }
-
-//   const regexRut = /^[\d.kK-]+$/;
-//   if (!regexRut.test(rut)) {
-//     throw new Error("El rut no puede contener letras");
-//   }
-
-//   const rutRegistrado = await Paciente.findOne({ rut: rut });
-//   if (rutRegistrado) {
-//     throw new Error("El rut ya fue ingresado");
-//   }
-
-//   const regex = /^[A-Za-z\s]+$/;
-
-//   if (!regex.test(nombre)) {
-//     throw new Error("El nombre debe contener solo letras");
-//   }
-
-//   if (nombre.length < 8) {
-//     throw new Error("El nombre no contiene los suficientes caracteres");
-//   }
-
-//   if (direccion.length < 8) {
-//     throw new Error("La direccion no contiene los suficientes caracteres");
-//   }
-
-//   if (edad < 0 || edad > 150) {
-//     throw new Error("La edad es incorrecta");
-//   }
-
-//   if (saldo < 0) {
-//     throw new Error("El saldo es incorrecto");
-//   }
-
-//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-//   if (!emailRegex.test(correo)) {
-//     throw new Error("El formato del correo es incorrecto");
-//   }
-// }
-
-// async function validarActualizacionDatos(edad, saldo, direccion) {
-//   if (edad < 0 || edad > 150) {
-//     throw new Error("La edad es incorrecta");
-//   }
-
-//   if (saldo < 0) {
-//     throw new Error("El saldo es incorrecto");
-//   }
-//   if (direccion.length < 8) {
-//     throw new Error("La direccion no contiene los suficientes caracteres");
-//   }
-// }
-
 const createInventario = async (req, res) => {
   try {
     var { nombre, categoria, cantidad } = req.body;
@@ -156,25 +92,31 @@ const getInventarios = async (req, res) => {
 const update = async (req, res) => {
   try {
     var { action } = req.params;
-
     var { nombre, categoria, cantidad } = req.body;
-
     var producto = await Inventario.findOne(
       { nombre: nombre },
       { _id: 1, nombre: 1, categoria: 1, cantidad: 1 }
     );
 
+    var query = await Categoria.findOne({ nombre: categoria }, { _id: 1 });
+    if (query == null) {
+      new Categoria({ categoria });
+      categoria = await Categoria.findOne({ nombre: nombre }, { _id: 1 });
+    }
+    categoria = categoria._id;
+
     if (producto != null) {
       cantidad = parseInt(cantidad);
-      if (action == "remove") {
+      if (action === "remove") {
         cantidad = producto.cantidad - cantidad;
       }
-      if (action == "add") {
+      if (action === "add") {
         cantidad += producto.cantidad;
       }
-      _id = producto._id;
-      const inventario = await Inventario.findByIdAndUpdate(
-        _id,
+      var id = producto._id;
+
+      producto = await Inventario.findByIdAndUpdate(
+        id,
         {
           nombre: nombre,
           categoria: categoria,
@@ -185,13 +127,14 @@ const update = async (req, res) => {
         }
       );
     }
-
+    producto = await producto.save();
     if (!producto) {
       return res.status(404).send({ message: "No se encontró el producto" });
     }
 
-    return res.status(201).send(inventario);
+    return res.status(201).send(producto);
   } catch (error) {
+    console.log(error);
     return res.status(400).send({ message: error.message });
   }
 };
