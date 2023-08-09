@@ -157,8 +157,8 @@ export default function TableList() {
 
   const [clinicaEdit, setClinicaEdit] = useState({
     nombreClinica: "",
-    telefono:"",
     rutClinica: "",
+    telefono:"",
     direccionClinica: "",
     correoClinica:"",
     rutDueno:""
@@ -173,28 +173,32 @@ export default function TableList() {
   };
 
   const dialogEditarEliminar = (event, row) => {
-    console.log(row.original.nombre);
+    console.log(row.original.nombreClinica);
     setClinicaEdit({
       _id: row.original._id,
       rutClinica: row.original.rutClinica,
       nombreClinica: row.original.nombreClinica,
+      telefono: row.original.telefono,
       direccionClinica: row.original.direccionClinica,
       correoClinica: row.original.correoClinica,
       rutDueno: row.original.rutDueno,
-      telefono: row.original.telefono
+      
       
     });
   };
 
   const handleDeleteRow = async () => {
     try {
-      axios.delete(
+      await axios.delete(
         `http://localhost:3001/api/deleteClinica/${clinicaEdit._id}`
       );
-      window.location.reload();
+      
+        window.location.reload();
+      
     } catch (error) {
       setError("Ocurrió un error al eliminar la clinica.");
     }
+    
   };
 
   const [error, setError] = useState(null);
@@ -287,7 +291,8 @@ ate  };
                         </DialogContent>
                         <DialogActions>
                           <Button
-                            onClick={() => {
+                            onClick={(event) => {
+                              dialogEditarEliminar(event, row);
                               setOpenEliminar(false);
                             }}
                             color="secondary"
@@ -324,7 +329,7 @@ ate  };
                                 autoFocus
                                 fullWidth
                                 label="Nombre"
-                                name="nombre"
+                                name="nombreClinica"
                                 variant="outlined"
                                 defaultValue={clinicaEdit.nombreClinica}
                                 InputProps={{
@@ -336,7 +341,7 @@ ate  };
                               <TextField
                                 fullWidth
                                 label="Rut"
-                                name="rut"
+                                name="rutClinica"
                                 variant="outlined"
                                 defaultValue={clinicaEdit.rutClinica}
                                 InputProps={{
@@ -358,7 +363,7 @@ ate  };
                               <TextField
                                 fullWidth
                                 label="Dirección"
-                                name="direccion"
+                                name="direccionClinica"
                                 variant="outlined"
                                 defaultValue={clinicaEdit.direccionClinica}
                                 onChange={onCambio}
