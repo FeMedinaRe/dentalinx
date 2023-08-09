@@ -16,7 +16,7 @@ const citaRoutes = require('./routes/citaRoutes');
 
 app.use(cors());
 app.use(express.json());
-app.options('', cors());
+app.use(cors());
 
 app.use('/api', pacienteRoutes);
 app.use('/api', profesionalRoutes);
