@@ -355,7 +355,6 @@ export default function TableList() {
         window.location.reload();
       }, 500);
     } catch (err) {
-      alert(err);
       setError("Ocurrió un error al actualizar los datos del paciente.");
     }
   };
