@@ -59,6 +59,20 @@ const dashboardRoutes = [{
         layout: "/admin",
     },
     {
+        path: "/practicante",
+        name: "Registrar Practicante",
+        icon: Person,
+        component: practicante,
+        layout: "/admin",
+    },
+    {
+        path: "/listapracticante",
+        name: "Lista de practicantes",
+        icon: "content_paste",
+        component: listapracticante,
+        layout: "/admin",
+    },
+    {
         path: "/inventario",
         name: "Inventario",
         icon: "content_paste",
@@ -98,20 +112,6 @@ const dashboardRoutes = [{
         name: "Reservar Cita",
         icon: Notifications,
         component: ReserveAttention,
-        layout: "/admin",
-    },
-    {
-        path: "/practicante",
-        name: "Registrar Practicante",
-        icon: Person,
-        component: practicante,
-        layout: "/admin",
-    },
-    {
-        path: "/listapracticante",
-        name: "Lista de practicantes",
-        icon: Person,
-        component: listapracticante,
         layout: "/admin",
     },
 ];

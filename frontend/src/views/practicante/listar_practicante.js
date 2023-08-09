@@ -176,7 +176,6 @@ const [optionCarrera, setOptionCarrera] = useState([]);
       [e.target.name]: e.target.value,
     });
 
-    //console.log(practicanteEdit);
   };
 
   const dialogEditarEliminar = (event, row) => {
