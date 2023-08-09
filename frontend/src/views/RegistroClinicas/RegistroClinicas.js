@@ -27,7 +27,7 @@ import { TextFields } from "@material-ui/icons";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./DatePickerStyles.css";
+//import "./DatePickerStyles.css";
 
 const styles = {
   cardCategoryWhite: {
@@ -52,26 +52,15 @@ const useStyles = makeStyles(styles);
 
 export default function UserProfile() {
   const [values, setValues] = useState({
-    nombre: "",
-    rut: "",
-    direccion: "",
-    edad: "",
-    correo: "",
-    fechaNacimiento: "",
-    sexo: "",
-    historiaClinica: "",
+    nombreClinica: "",
+    rutClinica: "",
+    direccionClinica: "",
+    correoClinica: "",
+    telefono: "",
+    rutDueno: "",
   });
 
-  const [fechaNacimiento, setFechaNacimiento] = useState(0);
 
-  const handleFechaNacimientoChange = (fechaNacimiento) => {
-    setFechaNacimiento(fechaNacimiento);
-    values.fechaNacimiento = fechaNacimiento;
-  };
-
-  const updateSelect = (e) => {
-    values.sexo = e.target.value;
-  };
 
   const onChange = (e) => {
     e.preventDefault();
@@ -89,14 +78,14 @@ export default function UserProfile() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/paciente",
+        "http://localhost:3001/api/clinica",
         values
       );
 
       if (response.status === 201) {
         Swal.fire({
-          title: "Paciente Guardado",
-          text: "El paciente ha sido guardado exitosamente",
+          title: "Clinica Guardada",
+          text: "La clinica ha sido guardado exitosamente",
           icon: "success",
           confirmButtonText: "Aceptar",
         });
@@ -119,17 +108,17 @@ export default function UserProfile() {
   return (
     <div>
       <GridContainer>
-        <GridItem xs={12} sm={12} md={12}>
+        <GridItem xs={12} sm={12} md={11}>
           <Card>
             <CardHeader color="primary" position="relative">
-              <h4 className={classes.cardTitleWhite}>Registar Paciente</h4>
+              <h4 className={classes.cardTitleWhite}>Registar Clinica Dental</h4>
             </CardHeader>
             <CardBody>
               <Box display="flex" height="100%" marginTop={3}>
                 <GridItem item xs={12} sm={6} md={4}>
                   <TextField
-                    label="Nombre Completo"
-                    id="nombre"
+                    label="Nombre Clinica"
+                    id="nombreClinica"
                     type="text"
                     fullWidth
                     onChange={onChange}
@@ -137,27 +126,19 @@ export default function UserProfile() {
                 </GridItem>
                 <GridItem item xs={12} sm={6} md={4}>
                   <TextField
-                    label="Rut"
-                    id="rut"
+                    label="Rut Clinica"
+                    id="rutClinica"
                     type="text"
                     onChange={onChange}
                     fullWidth
                   />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={2}>
-                  <InputLabel>Sexo</InputLabel>
-                  <Select label="Sexo" onChange={updateSelect}>
-                    <MenuItem value="Masculino">Masculino</MenuItem>
-                    <MenuItem value="Femenino">Femenino</MenuItem>
-                    <MenuItem value="Otro">Otro</MenuItem>
-                  </Select>
                 </GridItem>
               </Box>
               <Box display="flex" height="100%" marginTop={5}>
                 <GridItem xs={12} sm={12} md={4}>
                   <TextField
-                    label="Correo"
-                    id="correo"
+                    label="Correo Clinica"
+                    id="correoClinica"
                     type="text"
                     onChange={onChange}
                     fullWidth
@@ -165,31 +146,29 @@ export default function UserProfile() {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <TextField
-                    label="Direccion"
-                    id="direccion"
+                    label="Rut Dueño"
+                    id="rutDueno"
                     type="text"
                     onChange={onChange}
                     fullWidth
                   />
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <InputLabel>Fecha de Nacimiento</InputLabel>
-                  <DatePicker
-                    className="custom-datepicker"
-                    selected={fechaNacimiento}
-                    id="fechaNacimiento"
-                    onChange={handleFechaNacimientoChange}
-                    maxDate={new Date()}
-                    minDate={new Date(1880, 0, 1)}
+                <GridItem item xs={12} sm={6} md={4}>
+                  <TextField
+                    label="Telefono"
+                    id="telefono"
+                    type="text"
+                    onChange={onChange}
+                    fullWidth
                   />
                 </GridItem>
               </Box>
               <Box display="flex" height="100%" marginTop={3}></Box>
               <Box display="flex" height="100%" marginTop={3}>
                 <GridItem xs={12} sm={12} md={5}>
-                  <InputLabel>Historia Clinica</InputLabel>
+                  <InputLabel>Direccion</InputLabel>
                   <TextField
-                    id="historiaClinica"
+                    id="direccionClinica"
                     type="text"
                     onChange={onChange}
                     multiline

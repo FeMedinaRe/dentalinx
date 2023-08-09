@@ -19,30 +19,30 @@
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import LibraryBooks from "@material-ui/icons/LibraryBooks";
-import BubbleChart from "@material-ui/icons/BubbleChart";
+// import BubbleChart from "@material-ui/icons/BubbleChart";
 import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
-// core components/views for Admin layout
+//core components/views for Admin layout
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import RegistroPacientes from "views/Registro Pacientes/Registro Pacientes";
 import Pacientes from "views/Listado Pacientes/Pacientes";
 import Inventario from "views/Inventario/Inventario.js"; // INVENTARIO
-import Icons from "views/Icons/Icons.js";
-import Maps from "views/Maps/Maps.js";
-import NotificationsPage from "views/Notifications/Notifications.js";
+// import Icons from "views/Icons/Icons.js";
+// import Maps from "views/Maps/Maps.js";
+// import NotificationsPage from "views/Notifications/Notifications.js";
+import registrarTratamiento from "views/registrarTratamiento/registrarTratamiento.js";
+import listadoTratamientos from "views/listaTratamientos/listaTratamientos.js";
+import Clinicas from "views/ListadoClinicas/Clinicas.js";
+import RegistroClinicas from "views/RegistroClinicas/RegistroClinicas";
 import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
+import practicante from "views/practicante/registro_practicante.js";
+import listapracticante from "views/practicante/listar_practicante.js";
 import Profesionales from "views/Profesionales/Profesionales.js";
-import Profesional from "views/Profesional/Profesional.js"
-
+import Profesional from "views/Profesional/Profesional.js";
+import home from "views/home/home.js"
 // core components/views for RTL layout
 
-const dashboardRoutes = [{
-        path: "/dashboard",
-        name: "Dashboard",
-        icon: Dashboard,
-        component: DashboardPage,
-        layout: "/admin",
-    },
+const dashboardRoutes = [
     {
         path: "/registroPacientes",
         name: "Registrar Pacientes",
@@ -58,10 +58,17 @@ const dashboardRoutes = [{
         layout: "/admin",
     },
     {
-        path: "/inventario",
-        name: "Inventario",
+        path: "/practicante",
+        name: "Registrar Practicante",
+        icon: Person,
+        component: practicante,
+        layout: "/admin",
+    },
+    {
+        path: "/listapracticante",
+        name: "Lista de practicantes",
         icon: "content_paste",
-        component: Inventario,
+        component: listapracticante,
         layout: "/admin",
     },
     {
@@ -79,33 +86,48 @@ const dashboardRoutes = [{
       layout: "/admin",
     },
     {
-        path: "/icons",
-        name: "Icons",
-        icon: BubbleChart,
-        component: Icons,
-        layout: "/admin",
-    },
-    {
-        path: "/maps",
-        name: "Maps",
-        icon: LocationOn,
-        component: Maps,
-        layout: "/admin",
-    },
-    {
-        path: "/notifications",
-        name: "Notifications",
-        icon: Notifications,
-        component: NotificationsPage,
-        layout: "/admin",
-    },
-    {
         path: "/reserveattention",
         name: "Reservar Cita",
         icon: Notifications,
         component: ReserveAttention,
         layout: "/admin",
     },
+    {
+      path: "/registrarTratamiento",
+      name: "Registrar Tratamientos",
+      icon: LibraryBooks,
+      component: registrarTratamiento,
+      layout: "/admin",
+    }, 
+    {
+      path: "/listadoTratamientos",
+      name: "Listado Tratamientos",
+      icon: "content_paste",
+      component: listadoTratamientos,
+      layout: "/admin"
+    },
+    {
+      path: "/clinicas",
+      name: "Listado Clinicas",
+      icon: LocationOn,
+      component: Clinicas,
+      layout: "/admin",
+    },
+    {
+      path: "/registroClinicas",
+      name: "Registro Clinicas",
+      icon: LocationOn,
+      component: RegistroClinicas,
+      layout: "/admin",
+    },
+    {
+      path: "/inventario",
+      name: "Inventario",
+      icon: "content_paste",
+      component: Inventario,
+      layout: "/admin",
+    },
+ 
 ];
 
 export default dashboardRoutes;
