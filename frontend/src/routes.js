@@ -27,92 +27,104 @@ import DashboardPage from "views/Dashboard/Dashboard.js";
 import RegistroPacientes from "views/Registro Pacientes/Registro Pacientes";
 import Pacientes from "views/Listado Pacientes/Pacientes";
 import Inventario from "views/Inventario/Inventario.js"; // INVENTARIO
-import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
-import GenerarInforme from "views/GenerarInforme/Informes.js";
+import NotificationsPage from "views/Notifications/Notifications.js";
 import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
+import practicante from "views/practicante/registro_practicante.js";
+import listapracticante from "views/practicante/listar_practicante.js";
+import Profesionales from "views/Profesionales/Profesionales.js";
+import Profesional from "views/Profesional/Profesional.js"
+import GenerarInforme from "views/GenerarInforme/Informes.js";
 import Clinicas from "views/ListadoClinicas/Clinicas.js";
 import RegistroClinicas from "views/RegistroClinicas/RegistroClinicas";
+
 // core components/views for RTL layout
 
 const dashboardRoutes = [{
-  path: "/dashboard",
-  name: "Dashboard",
-  icon: Dashboard,
-  component: DashboardPage,
-  layout: "/admin",
-},
-{
-  path: "/registroPacientes",
-  name: "Registrar Pacientes",
-  icon: Person,
-  component: RegistroPacientes,
-  layout: "/admin",
-},
-{
-  path: "/pacientes",
-  name: "Listado Pacientes",
-  icon: "content_paste",
-  component: Pacientes,
-  layout: "/admin",
-},
-{
-  path: "/inventario",
-  name: "Inventario",
-  icon: "content_paste",
-  component: Inventario,
-  layout: "/admin",
-},
-{
-  path: "/typography",
-  name: "Typography",
-  icon: LibraryBooks,
-  component: Typography,
-  layout: "/admin",
-},
-{
-  path: "/icons",
-  name: "Icons",
-  icon: BubbleChart,
-  component: Icons,
-  layout: "/admin",
-},
-{
-  path: "/maps",
-  name: "Maps",
-  icon: LocationOn,
-  component: Maps,
-  layout: "/admin",
-},
-{
-  path: "/generarinformes",
-  name: "Generar Informe",
-  icon: Notifications,
-  component: GenerarInforme,
-  layout: "/admin",
-},
-{
-  path: "/reserveattention",
-  name: "Reservar Cita",
-  icon: Notifications,
-  component: ReserveAttention,
-  layout: "/admin",
-},
-{
-path: "/clinicas",
-name: "Listado Clinicas",
-icon: LocationOn,
-component: Clinicas,
-layout: "/admin",
-},
-{
-path: "/registroClinicas",
-name: "Registro Clinicas",
-icon: LocationOn,
-component: RegistroClinicas,
-layout: "/admin",
-},
+        path: "/dashboard",
+        name: "Dashboard",
+        icon: Dashboard,
+        component: DashboardPage,
+        layout: "/admin",
+    },
+    {
+        path: "/registroPacientes",
+        name: "Registrar Pacientes",
+        icon: Person,
+        component: RegistroPacientes,
+        layout: "/admin",
+    },
+    {
+        path: "/pacientes",
+        name: "Listado Pacientes",
+        icon: "content_paste",
+        component: Pacientes,
+        layout: "/admin",
+    },
+    {
+        path: "/practicante",
+        name: "Registrar Practicante",
+        icon: Person,
+        component: practicante,
+        layout: "/admin",
+    },
+    {
+        path: "/listapracticante",
+        name: "Lista de practicantes",
+        icon: "content_paste",
+        component: listapracticante,
+        layout: "/admin",
+    },
+    {
+        path: "/inventario",
+        name: "Inventario",
+        icon: "content_paste",
+        component: Inventario,
+        layout: "/admin",
+    },
+    {
+      path: "/profesional",
+      name: "Registrar profesional",
+      icon: Person,
+      component: Profesional,
+      layout: "/admin",
+    },
+    {
+      path: "/Profesionales",
+      name: "Profesionales",
+      icon: LibraryBooks,
+      component: Profesionales,
+      layout: "/admin",
+    },
+    {
+      path: "/generarinformes",
+      name: "Generar Informe",
+      icon: Notifications,
+      component: GenerarInforme,
+      layout: "/admin",
+    },
+    {
+    path: "/clinicas",
+    name: "Listado Clinicas",
+    icon: LocationOn,
+    component: Clinicas,
+    layout: "/admin",
+    },
+    {
+    path: "/registroClinicas",
+    name: "Registro Clinicas",
+    icon: LocationOn,
+    component: RegistroClinicas,
+    layout: "/admin",
+    },
+    {
+        path: "/reserveattention",
+        name: "Reservar Cita",
+        icon: Notifications,
+        component: ReserveAttention,
+        layout: "/admin",
+    },
 ];
 
 export default dashboardRoutes;

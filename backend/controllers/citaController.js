@@ -3,113 +3,26 @@ const paciente = require("../models/paciente");
 const dentista = require("../models/dentista");
 const tratamiento = require("../models/tratamiento");
 
-
-async function validarDatoscita(
-    rut,
-    nombre,
-    direccion,
-    edad,
-    saldo,
-    correo
-) {
-    if (rut.length < 8 || rut.length > 12) {
-        throw new Error("El rut es incorrecto");
-    }
-
-    const regexRut = /^[\d.kK-]+$/;
-    if (!regexRut.test(rut)) {
-        throw new Error("El rut no puede contener letras");
-    }
-
-    const rutRegistrado = await cita.findOne({ rut: rut });
-    if (rutRegistrado) {
-        throw new Error("El rut ya fue ingresado");
-    }
-
-    const regex = /^[A-Za-z\s]+$/;
-
-    if (!regex.test(nombre)) {
-        throw new Error("El nombre debe contener solo letras");
-    }
-
-    if (nombre.length < 8) {
-        throw new Error("El nombre no contiene los suficientes caracteres");
-    }
-
-    if (direccion.length < 8) {
-        throw new Error("La direccion no contiene los suficientes caracteres");
-    }
-
-    if (edad < 0 || edad > 150) {
-        throw new Error("La edad es incorrecta");
-    }
-
-    if (saldo < 0) {
-        throw new Error("El saldo es incorrecto");
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(correo)) {
-        throw new Error("El formato del correo es incorrecto");
-    }
-}
-
-async function validarActualizacionDatos(edad, saldo, direccion) {
-    if (edad < 0 || edad > 150) {
-        throw new Error("La edad es incorrecta");
-    }
-
-    if (saldo < 0) {
-        throw new Error("El saldo es incorrecto");
-    }
-    if (direccion.length < 8) {
-        throw new Error("La direccion no contiene los suficientes caracteres");
-    }
-}
-
 //Para crear una nueva cita
 const createCita = async(req, res) => {
     try {
-        console.log("Hola");
         var { paciente_id, dentista_id, tratamiento_id, fecha, hora, estado } = req.body;
 
-        // var _categoria = categoria;
-        // var _nombre = nombre;
-        // var _cantidad = parseInt(cantidad);
         var _id_paciente = paciente_id;
         var _id_dentista = dentista_id;
         var _id_tratamiento = tratamiento_id;
 
-        // console.log("_id_paciente:", _id_paciente);
-
-
         //PACIENTE
         paciente_id = await paciente.findOne({ nombre: _id_paciente }, { _id: 1 })
-            // console.log("AYUDA");
         paciente_id = paciente_id._id;
-        // console.log("ALOHA");
-        console.log(paciente_id);
 
         //DENTISTA
         dentista_id = await dentista.findOne({ nombre: _id_dentista }, { _id: 1 })
-        console.log("DENTISTA");
         dentista_id = dentista_id._id;
-        console.log(dentista_id);
 
         //TRATAMIENTO
         tratamiento_id = await tratamiento.findOne({ nombre: _id_tratamiento }, { _id: 1 })
-        console.log("TRATAMIENTO");
         tratamiento_id = tratamiento_id._id;
-        console.log(tratamiento_id);
-
-        console.log(paciente_id);
-        console.log(dentista_id);
-        console.log(tratamiento_id);
-        console.log(typeof fecha);
-        console.log(typeof hora);
-        console.log(typeof estado);
-
 
         citaNueva = new Cita({
             paciente_id,
@@ -121,7 +34,6 @@ const createCita = async(req, res) => {
         })
 
         citaNueva = citaNueva.save();
-
 
         return res.status(201).send(citaNueva);
     } catch (error) {
@@ -161,7 +73,7 @@ const getPacientes = async(req, res) => {
     }
 }
 
-//Para obtener los dentistas para el select
+//Para obtener los tratamientos para el select
 const getTratamientos = async(req, res) => {
     try {
         const tratamientos = await tratamiento.find();
@@ -242,8 +154,6 @@ const getCitas = async(req, res) => {
 
 const updateCita = async(req, res) => {
     try {
-
-        console.log("PRUEBA UPDATE");
         var { id } = req.params;
 
         var { paciente_id, dentista_id, tratamiento_id, fecha, hora, estado } = req.body;
@@ -264,16 +174,6 @@ const updateCita = async(req, res) => {
         tratamiento_id = await tratamiento.findOne({ nombre: _id_tratamiento }, { _id: 1 })
         tratamiento_id = tratamiento_id._id;
 
-        console.log("Este es el id que llega");
-        console.log(id);
-
-        console.log("Lo transformamos a ObjectId")
-        const { ObjectId } = require("mongodb");
-
-        // id = new ObjectId(id)
-        // console.log(typeof id);
-        // console.log(id);
-
         var query = await Cita.findByIdAndUpdate (id, {
             paciente_id: paciente_id,
             dentista_id: dentista_id,
@@ -285,15 +185,12 @@ const updateCita = async(req, res) => {
             new: true,
         });
 
-        console.log(query);
-        
         if (!query) {
             return res.status(404).send({ message: "No se encontró la cita" });
         }
 
         return res.status(201).send(query);
     }  catch (error) {
-        console.log("Ocurrió un error:", error.message);
         return res.status(400).send({ message: error.message });
     }
 };
