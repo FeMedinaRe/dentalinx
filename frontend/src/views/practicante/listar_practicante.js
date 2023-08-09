@@ -388,7 +388,7 @@ const [optionCarrera, setOptionCarrera] = useState([]);
                         >
                           <DialogTitle>Editar Practicante</DialogTitle>
                           <DialogContent>
-                          <GridItem item xs={12} sm={6} md={4}>
+                          <GridItem item xs={24} sm={12} md={8}>
                   <TextField
                     label="Nombre Completo"
                     id="nombre"
@@ -399,7 +399,7 @@ const [optionCarrera, setOptionCarrera] = useState([]);
                     onChange={onCambio}
                   />
                 </GridItem>
-                <GridItem item xs={12} sm={6} md={4}>
+                <GridItem item xs={24} sm={12} md={8}>
                   <TextField
                     label="Rut"
                     id="rut"
@@ -410,7 +410,7 @@ const [optionCarrera, setOptionCarrera] = useState([]);
                     fullWidth
                   />
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
+                <GridItem xs={24} sm={12} md={8}>
                   <TextField
                     label="Correo"
                     id="correo"
@@ -421,7 +421,7 @@ const [optionCarrera, setOptionCarrera] = useState([]);
                     fullWidth
                   />
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
+                <GridItem xs={24} sm={12} md={8}>
                 <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">universidad</InputLabel>
                             <Select name="iduniversidad" 
@@ -439,7 +439,7 @@ const [optionCarrera, setOptionCarrera] = useState([]);
                             </Select>
                     </FormControl>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
+                <GridItem xs={24} sm={12} md={8}>
                 <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Carrera</InputLabel>
                             <Select name="idcarrera" 

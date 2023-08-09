@@ -35,10 +35,6 @@ async function validarDatosPracticante(
     throw new Error("El nombre no contiene los suficientes caracteres");
   }
 
-  if (direccion.length < 8) {
-    throw new Error("La direccion no contiene los suficientes caracteres");
-  }
-
   const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!correoRegex.test(correo)) {
@@ -72,17 +68,11 @@ async function validarActualizacionDatos(
   if (nombre.length < 8) {
     throw new Error("El nombre no contiene los suficientes caracteres");
   }
-
-  
-
   const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
   if (!correoRegex.test(correo)) {
     throw new Error("Formato de correo incorrecto");
   }
-  if (regexRut.test(rut) && (await Practicante.findOne({ rut: rut, _id: { $ne: rut } }))) {
-    throw new Error("El rut ya fue ingresado");
-  }
+
 }
 
 const getUniversidad = async (req, res) => {

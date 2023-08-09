@@ -372,5 +372,6 @@ export default function RegistroPracticante() {
         </GridItem>
       </GridContainer>
     </div>
+
   );
 }
