@@ -1111,12 +1111,6 @@ regenerator-runtime@^0.13.11:
   resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
   integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
 
-<<<<<<< HEAD
-rut.js@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/rut.js/-/rut.js-2.1.0.tgz#6383282513a7983d29ba2ae4810e0dc9c168a2ec"
-  integrity sha512-v8tXUbqycX2frkeZBcCJgn2dbZE29S21bOF+tRmow58m2qEVz5lGLmNaJ9ahTRfj3WEfwl55mTZi8qqE91w81g==
-=======
 resolve-from@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/resolve-from/-/resolve-from-4.0.0.tgz#4abcd852ad32dd7baabfe9b40e00a36db5f392e6"
@@ -1130,7 +1124,11 @@ resolve@^1.19.0:
     is-core-module "^2.11.0"
     path-parse "^1.0.7"
     supports-preserve-symlinks-flag "^1.0.0"
->>>>>>> 660ef443edb8fda14642fc376edb5efdad23eb48
+
+rut.js@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/rut.js/-/rut.js-2.1.0.tgz#6383282513a7983d29ba2ae4810e0dc9c168a2ec"
+  integrity sha512-v8tXUbqycX2frkeZBcCJgn2dbZE29S21bOF+tRmow58m2qEVz5lGLmNaJ9ahTRfj3WEfwl55mTZi8qqE91w81g==
 
 safe-buffer@5.2.1:
   version "5.2.1"
