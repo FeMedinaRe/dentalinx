@@ -174,7 +174,7 @@ export default function TableList() {
 
   const handleDeleteRow = async () => {
     try {
-      axios.delete(
+      await axios.delete(
         `http://localhost:3001/api/Tratamiento/${tratamientoEdit._id}`
       );
       window.location.reload();
@@ -320,7 +320,7 @@ ate  };
                               <TextField
                                 fullWidth
                                 label="Costo"
-                                name="rut"
+                                name="costo"
                                 variant="outlined"
                                 defaultValue={tratamientoEdit.costo}
                                 InputProps={{
@@ -332,7 +332,7 @@ ate  };
                               <TextField
                                 fullWidth
                                 label="Descripción"
-                                name="telefono"
+                                name="descripcion"
                                 variant="outlined"
                                 defaultValue={tratamientoEdit.descripcion}
                                 onChange={onCambio}
@@ -342,7 +342,7 @@ ate  };
                               <TextField
                                 fullWidth
                                 label="Duración"
-                                name="direccion"
+                                name="duracion"
                                 variant="outlined"
                                 defaultValue={tratamientoEdit.duracion}
                                 onChange={onCambio}
