@@ -281,6 +281,14 @@ export default function TableList() {
           <h2 className={classes.cardTitleWhite}> Informe Clinica</h2>
             <h4 className={classes.cardTitleWhite}> Citas Agendadas</h4>
             <div> Total de citas agendadas: {tableData.length} </div>  {/*ARREGLAR PARA EL REPORTE, YA QUE APARECEN LA CANTIDAD DE CITAS TOTALES ALMACENADAS EN LA BD */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => window.print()}
+            style={{ marginBottom: '16px' }}
+          >
+            Imprimir
+          </Button> 
           </CardHeader>
           <CardBody>
             <div className={classes.inputContainer}>
