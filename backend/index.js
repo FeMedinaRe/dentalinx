@@ -10,6 +10,8 @@ const practicanteRoutes = require('./routes/practicanteRoutes');
 const profesionalRoutes= require('./routes/profesionalRoutes');
 
 const inventarioRoutes = require('./routes/inventarioRoutes');
+const clinicaRoutes = require ('./routes/clinicaRoutes');
+const tratamientosRoutes = require ('./routes/tratamientosRoutes');
 const citaRoutes = require('./routes/citaRoutes');
 
 app.use(cors());
@@ -19,6 +21,8 @@ app.options('', cors());
 app.use('/api', pacienteRoutes);
 app.use('/api', profesionalRoutes);
 app.use('/api', inventarioRoutes);
+app.use('/api', clinicaRoutes);
+app.use('/api', tratamientosRoutes);
 app.use('/api', citaRoutes);
 app.use('/api', practicanteRoutes);
 
@@ -31,7 +35,6 @@ mongoose.connect('mongodb+srv://Juan:juan1234@dentalinx.sz8at8j.mongodb.net/')
         // Manejo de errores en caso de que la conexión falle
         console.error('Error al conectar a la base de datos:', error);
     });
-
 
 app.listen(3001, () => {
     console.log(`Inicia en puerto ${process.env.PORT}`);
