@@ -81,10 +81,12 @@ export default function RegistroPracticante() {
   const numericRegex = /^[0-9]*$/;
   const alphaErrorMessage = "Solo se permiten letras.";
   const numericErrorMessage = "Solo se permiten números.";
+  
   const [carreraseleccionada, setCarreraSeleccionada] = useState({
     _id:"",
     nombre:""
   });
+
   const [universidadseleccionada, setUniversidadSeleccionada] = useState({
     _id:"",
     nombre:""
@@ -144,16 +146,18 @@ export default function RegistroPracticante() {
           setTableData(response.data);
 
           response = await axios.get("http://localhost:3001/api/carrera");
-          var carreras = [
-            ...new Set(response.data.map((item) => item.nombre)),
-          ];
-          setOptionCarrera(carreras); 
-
+          var nuevoArreglo = response.data.map(function (elemento) {
+            return {
+              _id: elemento._id,
+              nombre: elemento.nombre,
+            };
+          });
+          console.log(nuevoArreglo);
+          setOptionCarrera(response.data);
+          console.log(optionCarrera);
+          
           response = await axios.get("http://localhost:3001/api/universidad");
-          var universidades = [
-            ...new Set(response.data.map((item) => item.nombre)),
-          ];
-          setOptionUniversidad(universidades);  
+          setOptionUniversidad(response.data);  
           
         } catch (error) {
           console.error(error);
@@ -183,6 +187,7 @@ export default function RegistroPracticante() {
   const Create = async () => {
     
     try {
+      console.log(values);
       const response = await api.post(`/`, values);
       setValues(false);
       setTimeout(() => {
@@ -197,12 +202,20 @@ export default function RegistroPracticante() {
   const handleUniversidad = (e) => {
     const { name, value } = e.target;
     setUniversidadSeleccionada({ ...universidadseleccionada, [name]: value });
-    setValues({ ...universidadseleccionada, [name]: value }); 
+    setValues({
+      ...values,
+      [name]: value,
+    });
+    console.log(values);
   };
   const handleCarrera = (e) => {
     const { name, value } = e.target;
     setCarreraSeleccionada({ ...carreraseleccionada, [name]: value });
-    setValues({ ...universidadseleccionada, [name]: value }); 
+    setValues({
+      ...values,
+      [name]: value,
+    });
+    console.log(values);
   };  
 
 
@@ -312,7 +325,7 @@ export default function RegistroPracticante() {
                 <GridItem xs={12} sm={12} md={4}>
                 <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">universidad</InputLabel>
-                            <Select name="iduniversidad" 
+                            <Select name="universidad" 
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
                               defaultValue = ""
@@ -320,8 +333,8 @@ export default function RegistroPracticante() {
                               >
                                 {optionUniversidad.map((option,id) => (
 
-                                    <MenuItem key={id} value={option}>
-                                      {option}
+                                    <MenuItem key={id} value={option._id}>
+                                      {option.nombre}
                                     </MenuItem>)
                                 )}
                             </Select>
@@ -330,16 +343,16 @@ export default function RegistroPracticante() {
                 <GridItem xs={12} sm={12} md={4}>
                 <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Carrera</InputLabel>
-                            <Select name="idcarrera" 
+                            <Select name="carrera" 
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
                               defaultValue = ""
                               onChange={handleCarrera}
                               >
                                 {optionCarrera.map((option,id) => (
-
-                                    <MenuItem key={id} value={option}>
-                                      {option}
+                    
+                                    <MenuItem key={id} value={option._id}>
+                                      {option.nombre}
                                     </MenuItem>)
                                 )}
                             </Select>

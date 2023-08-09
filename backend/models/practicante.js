@@ -16,11 +16,11 @@ const practicanteSchema = new Schema({
     type: String,
     required: true,
   },
-  carrera: {
+  idcarrera: {
     type: ObjectId,
     required: true,
   },
-  universidad: {
+  iduniversidad: {
     type: ObjectId,
     required: true,
   },

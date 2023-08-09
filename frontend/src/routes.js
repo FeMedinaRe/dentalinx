@@ -33,6 +33,7 @@ import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
 import practicante from "views/practicante/registro_practicante.js";
+import listapracticante from "views/practicante/listar_practicante.js";
 
 // core components/views for RTL layout
 
@@ -101,9 +102,16 @@ const dashboardRoutes = [{
     },
     {
         path: "/practicante",
-        name: "practicante",
+        name: "Registrar Practicante",
         icon: Person,
         component: practicante,
+        layout: "/admin",
+    },
+    {
+        path: "/listapracticante",
+        name: "Lista de practicantes",
+        icon: Person,
+        component: listapracticante,
         layout: "/admin",
     },
 ];

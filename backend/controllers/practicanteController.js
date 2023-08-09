@@ -4,15 +4,14 @@ const Universidad = require("../models/universidad");
 const { format, eachDayOfInterval } = require("date-fns");
 const Asociada = require("../models/asociada");
 
-async function validarDatosPaciente(
+async function validarDatosPracticante(
   rut,
   nombre,
-  direccion,
   correo,
-  sexo,
-  fechaNacimiento
+  idcarrera,
+  iduniversidad
 ) {
-  if (rut.length < 8 || rut.length > 12) {
+  if (rut.length < 12 || rut.length > 12) {
     throw new Error("El rut es incorrecto");
   }
 
@@ -21,7 +20,7 @@ async function validarDatosPaciente(
     throw new Error("Formato incorrecto del rut");
   }
 
-  const rutRegistrado = await Paciente.findOne({ rut: rut });
+  const rutRegistrado = await Practicante.findOne({ rut: rut });
   if (rutRegistrado) {
     throw new Error("El rut ya fue ingresado");
   }
@@ -46,47 +45,49 @@ async function validarDatosPaciente(
     throw new Error("Formato de correo incorrecto");
   }
 
-  if (sexo.length == 0) {
-    throw new Error("Debe marcar el sexo");
-  }
 
-  if (fechaNacimiento == 0) {
-    throw new Error("Debe ingresa una fecha de nacimiento");
-  }
 }
 
 async function validarActualizacionDatos(
-  direccion,
-  edad,
+  rut,
+  nombre,
   correo,
-  fechaIngreso
+  idcarrera,
+  iduniversidad
 ) {
-  if (edad < 0 || edad > 150) {
-    console.log("error edad");
-    throw new Error("La edad es incorrecta");
+  if (rut.length < 12 || rut.length > 12) {
+    throw new Error("El rut es incorrecto");
+  }
+  const regexRut = /^[\d.kK-]+$/;
+  if (!regexRut.test(rut)) {
+    throw new Error("Formato incorrecto del rut");
   }
 
-  if (direccion.length < 8) {
-    console.log("error direccion");
-    throw new Error("La direccion no contiene los suficientes caracteres");
+  const regex = /^[A-Za-z\s]+$/;
+
+  if (!regex.test(nombre)) {
+    throw new Error("El nombre debe contener solo letras");
   }
+
+  if (nombre.length < 8) {
+    throw new Error("El nombre no contiene los suficientes caracteres");
+  }
+
+  
 
   const correoRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   if (!correoRegex.test(correo)) {
     throw new Error("Formato de correo incorrecto");
   }
-
-  if (fechaIngreso == null) {
-    throw new Error("Fecha Incorrecta");
+  if (regexRut.test(rut) && (await Practicante.findOne({ rut: rut, _id: { $ne: rut } }))) {
+    throw new Error("El rut ya fue ingresado");
   }
 }
 
 const getUniversidad = async (req, res) => {
-  console.log("universidadlog");
   try {
-    //var [idcarrera] = rec.params;
-    //const universidad = await Universidad.find({_id:{$in:Asociada.distinct("iduniversidad", {idcarrera:idcarrera})}})
+
     const universidad = await Universidad.find();
     if (universidad.length === 0) {
       return res
@@ -123,64 +124,127 @@ const createPracticante = async (req, res) => {
     const { rut, nombre, correo, carrera, universidad } = req.body;
 
     console.log(rut, nombre, correo, carrera, universidad)
-    // await validarDatosPaciente(
-    //   rut,
-    //   nombre,
-    //   correo,
-    //   carrera,
-    //   universidad
-    // );
-
-    const newPracticante = new Practicante({
+    const { ObjectId } = require("mongodb");   
+    var idcarrera = new ObjectId(carrera);
+    var iduniversidad = new ObjectId(universidad);
+    console.log(typeof idcarrera,typeof iduniversidad);
+    
+    await validarDatosPracticante(
       rut,
       nombre,
       correo,
       carrera,
       universidad
+    );
+    // transformar un String a ObjectId
+    //const { ObjectId } = require("mongodb");
+    
+    // console.log(typeof idcarrera,typeof iduniversidad);
+    const newPracticante = new Practicante({
+      rut,
+      nombre,
+      correo,
+      idcarrera,
+      iduniversidad
     });
+    //console.log(newPracticante);
+    const practicante = await newPracticante.save();
 
-    const Practicante = await newPracticante.save();
-
-    return res.status(201).send(Practicante);
+    return res.status(201).send(practicante);
   } catch (error) {
+    console.log(error);
     return res.status(400).send({ message: error.message });
   }
 };
 
 const getPracticante = async (req, res) => {
   try {
-    const practicante = await Practicante.find().exec();
+    const practicantes = await Practicante.aggregate([{
+      $lookup: {
+          from: "universidades",
+          localField: "iduniversidad",
+          foreignField: "_id",
+          as: "universidad_info"
+      }
+  },
+  {
+      $lookup: {
+          from: "carreras",
+          localField: "idcarrera",
+          foreignField: "_id",
+          as: "carrera_info"
+      }
+  },
+  {
+      $unwind: "$universidad_info"
+  },
+  {
+      $unwind: "$carrera_info"
+  },
+  {
+      $project: {
+          _id: 1,
+          rut: 1,
+          nombre: 1,
+          correo: 1,
+          idcarrera: "$carrera_info.nombre",
+          iduniversidad: "$universidad_info.nombre",
 
-    if (practicante.length === 0) {
+      }
+  }
+]);;
+
+console.log(practicantes);
+
+    if (practicantes.length === 0) {
       return res
         .status(404)
         .send({ message: "No se han encontrado practicantes registrados" });
     }
 
-    return res.status(200).send(practicante);
+    return res.status(200).send(practicantes);
   } catch (error) {
+    console.log(error);
     return res.status(400).send({ message: "No se realizó la búsqueda" });
   }
 };
 
 const updatePracticante = async (req, res) => {
+  console.log(req.params, req.body);
   try {
-    const { id } = req.params;
+    var { id } = req.params;
 
-    const { rut, nombre, correo, carrera, universidad } = req.body;
+    var { rut, nombre, correo, idcarrera, iduniversidad } = req.body;
 
-    await validarActualizacionDatos(rut, nombre, correo, carrera, universidad);
+    var _carrera = idcarrera;
+    var _universidad = iduniversidad;
 
-    const practicante = await Paciente.findByIdAndUpdate(id, req.body, {
+    await validarActualizacionDatos( rut, nombre, correo, idcarrera, iduniversidad );
+
+    //carrera
+    idcarrera = await Carrera.findOne({ nombre: _carrera }, { _id: 1 })
+    idcarrera = idcarrera._id;
+
+    //universidad
+    iduniversidad = await Universidad.findOne({ nombre: _universidad }, { _id: 1 })
+    iduniversidad = iduniversidad._id;
+
+    var practicantes = await Practicante.findByIdAndUpdate (id, {
+      rut : rut,
+      nombre : nombre,
+      correo : correo,
+      idcarrera : idcarrera,
+      iduniversidad : iduniversidad
+  }, {
       new: true,
-    });
-
-    if (!practicante) {
+  });
+    if (!practicantes) {
       return res.status(404).send({ message: "No se encontró el practicante" });
     }
 
-    return res.status(201).send(practicante);
+    return res.status(201).send(practicantes);
   } catch (error) {
+    console.log(error);
     return res.status(400).send({ message: error.message });
   }
 };
