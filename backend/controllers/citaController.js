@@ -140,7 +140,6 @@ const getCitas = async(req, res) => {
         ]);;
 
 
-
         if (citas.length === 0) {
             return res
                 .status(404)
@@ -212,6 +211,70 @@ const deleteCita = async(req, res) => {
     }
 };
 
+const buscarPorRut = async(req, res) => {
+    const rut = req.params.rut;
+    try {
+        const cita = await cita.findOne({ rut: rut }).exec();
+        if (!cita) {
+            return res
+                .status(404)
+                .send({ message: "No se han encontrado al cita" });
+        }
+        return res.status(201).send(cita);
+    } catch (error) {
+        return res.status(400).send({ message: "No se realizo la busqueda" });
+    }
+};
+
+const buscarPorNombre = async(req, res) => {
+    const nombre = req.params.nombre;
+    try {
+        const cita = await cita.findOne({ nombre: nombre }).exec();
+        if (!cita) {
+            return res
+                .status(404)
+                .send({ message: "No se han encontrado al cita" });
+        }
+        return res.status(201).send(cita);
+    } catch (error) {
+        return res.status(400).send({ message: "No se realizo la busqueda" });
+    }
+};
+
+
+
+
+
+/*                                            INICIO GENERACION DE INFORMES                                          */
+
+
+const buscarPorFechas = async(req, res) => {
+    
+
+    const fechaInicio = moment(req.body.fechaInicio,"DD-MM-YYYY");
+    const fechaFin = moment(req.body.fechaFin,"DD-MM-YYYY");
+    
+    try{
+    const consulta = {
+      fecha: {
+        $gte: fechaInicio.toDate(),
+        $lte: fechaFin.toDate(),
+      }
+    };
+
+    const resultado = await collection.find(consulta).toArray();
+    res.json(resultadod);
+    }
+    catch(error){
+        console.error('Error en la consulta de fechas', error);
+        res.status(500).send('Error interno del servidor');
+    }
+};
+
+
+
+/*                                            FIN GENERACION DE INFORMES                                          */
+
 module.exports = {
     createCita,
     getCitas,
@@ -220,4 +283,7 @@ module.exports = {
     getDentistas,
     getPacientes,
     getTratamientos,
+    buscarPorFechas
+    // buscarPorRut,
+    // buscarPorNombre,
 };

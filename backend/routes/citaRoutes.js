@@ -12,5 +12,9 @@ api.delete("/deleteCita/:id", citaController.deleteCita);
 // api.get("/citaPorRut/:rut", citaController.buscarPorRut);
 // api.get("/citaPorNombre/:nombre", citaController.buscarPorNombre);
 
+// PARA LOS INFORMES
+
+api.get("/generarinformes", citaController.buscarPorFechas);
+
 
 module.exports = api;
