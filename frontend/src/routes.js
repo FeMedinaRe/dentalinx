@@ -31,13 +31,10 @@ import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
-<<<<<<< HEAD
 import practicante from "views/practicante/registro_practicante.js";
 import listapracticante from "views/practicante/listar_practicante.js";
-=======
 import Profesionales from "views/Profesionales/Profesionales.js";
 import Profesional from "views/Profesional/Profesional.js"
->>>>>>> 42a0779019e5ed45eaba73afead6b185520d0268
 
 // core components/views for RTL layout
 
