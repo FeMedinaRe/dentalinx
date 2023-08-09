@@ -14,11 +14,7 @@ const clinicaRoutes = require ('./routes/clinicaRoutes');
 const tratamientosRoutes = require ('./routes/tratamientosRoutes');
 const citaRoutes = require('./routes/citaRoutes');
 
-app.use(cors({
-    origin: 'https://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(cors());
 app.use(express.json());
 app.options('', cors());
 
