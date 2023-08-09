@@ -39,6 +39,7 @@ import practicante from "views/practicante/registro_practicante.js";
 import listapracticante from "views/practicante/listar_practicante.js";
 import Profesionales from "views/Profesionales/Profesionales.js";
 import Profesional from "views/Profesional/Profesional.js";
+import home from "views/home/home.js"
 // core components/views for RTL layout
 
 const dashboardRoutes = [
