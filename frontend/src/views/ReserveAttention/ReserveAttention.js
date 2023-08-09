@@ -38,12 +38,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
-<<<<<<< HEAD
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-=======
->>>>>>> 6297d23dc56c50a9cd264592761def28a6c0579d
 import moment from 'moment';
 
 // Estilos de la página
@@ -352,10 +346,6 @@ export default function TableList() {
   const handleSubmit = async (event, rowID) => {
     try {
 
-<<<<<<< HEAD
-      console.log(editCitaMedica);
-=======
->>>>>>> 6297d23dc56c50a9cd264592761def28a6c0579d
       const response = await axios.put(
         `http://localhost:3001/api/cita/${editCitaMedica._id}`,
          editCitaMedica
@@ -365,10 +355,7 @@ export default function TableList() {
         window.location.reload();
       }, 500);
     } catch (err) {
-<<<<<<< HEAD
       alert(err);
-=======
->>>>>>> 6297d23dc56c50a9cd264592761def28a6c0579d
       setError("Ocurrió un error al actualizar los datos del paciente.");
     }
   };
@@ -474,14 +461,6 @@ export default function TableList() {
                       />
                     </Grid>
                     <Grid item xs={12}>
-<<<<<<< HEAD
-                    {/* <LocalizationProvider >
-                      <DemoContainer components={['TimePicker']}>
-                        <TimePicker onChange={handleChange} label="Selecciona la hora" />
-                      </DemoContainer>
-                    </LocalizationProvider> */}
-=======
->>>>>>> 6297d23dc56c50a9cd264592761def28a6c0579d
                       <input
                         required
                         style={inputDateStyles}                   
@@ -720,11 +699,7 @@ export default function TableList() {
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
                           defaultValue={editCitaMedica.estado}
-<<<<<<< HEAD
-                          onChange={handleChange}
-=======
                           onChange={onCambio}
->>>>>>> 6297d23dc56c50a9cd264592761def28a6c0579d
                         >
                           <MenuItem value={"Agendada"}>Agendada</MenuItem>
                           <MenuItem value={"Finalizada"}>Finalizada</MenuItem>
