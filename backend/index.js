@@ -6,7 +6,12 @@ const app = express();
 dotenv.config();
 
 const pacienteRoutes = require('./routes/pacienteRoutes');
+<<<<<<< HEAD
 const practicanteRoutes = require('./routes/practicanteRoutes');
+=======
+const profesionalRoutes= require('./routes/profesionalRoutes');
+
+>>>>>>> 42a0779019e5ed45eaba73afead6b185520d0268
 const inventarioRoutes = require('./routes/inventarioRoutes');
 const citaRoutes = require('./routes/citaRoutes');
 
@@ -15,6 +20,7 @@ app.use(express.json());
 app.options('', cors());
 
 app.use('/api', pacienteRoutes);
+app.use('/api', profesionalRoutes);
 app.use('/api', inventarioRoutes);
 app.use('/api', citaRoutes);
 app.use('/api', practicanteRoutes);

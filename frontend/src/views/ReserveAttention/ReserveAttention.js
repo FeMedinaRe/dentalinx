@@ -38,9 +38,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Add from "@material-ui/icons/Add";
 import Remove from "@material-ui/icons/Remove";
 import EditIcon from "@material-ui/icons/Edit";
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import moment from 'moment';
 
 // Estilos de la página
@@ -349,7 +346,6 @@ export default function TableList() {
   const handleSubmit = async (event, rowID) => {
     try {
 
-      console.log(editCitaMedica);
       const response = await axios.put(
         `http://localhost:3001/api/cita/${editCitaMedica._id}`,
          editCitaMedica
@@ -359,7 +355,6 @@ export default function TableList() {
         window.location.reload();
       }, 500);
     } catch (err) {
-      alert(err);
       setError("Ocurrió un error al actualizar los datos del paciente.");
     }
   };
@@ -465,11 +460,6 @@ export default function TableList() {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                    {/* <LocalizationProvider >
-                      <DemoContainer components={['TimePicker']}>
-                        <TimePicker onChange={handleChange} label="Selecciona la hora" />
-                      </DemoContainer>
-                    </LocalizationProvider> */}
                       <input
                         required
                         style={inputDateStyles}                   
@@ -708,7 +698,7 @@ export default function TableList() {
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
                           defaultValue={editCitaMedica.estado}
-                          onChange={handleChange}
+                          onChange={onCambio}
                         >
                           <MenuItem value={"Agendada"}>Agendada</MenuItem>
                           <MenuItem value={"Finalizada"}>Finalizada</MenuItem>

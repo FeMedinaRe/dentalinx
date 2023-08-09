@@ -27,13 +27,17 @@ import DashboardPage from "views/Dashboard/Dashboard.js";
 import RegistroPacientes from "views/Registro Pacientes/Registro Pacientes";
 import Pacientes from "views/Listado Pacientes/Pacientes";
 import Inventario from "views/Inventario/Inventario.js"; // INVENTARIO
-import Typography from "views/Typography/Typography.js";
 import Icons from "views/Icons/Icons.js";
 import Maps from "views/Maps/Maps.js";
 import NotificationsPage from "views/Notifications/Notifications.js";
 import ReserveAttention from "views/ReserveAttention/ReserveAttention.js";
+<<<<<<< HEAD
 import practicante from "views/practicante/registro_practicante.js";
 import listapracticante from "views/practicante/listar_practicante.js";
+=======
+import Profesionales from "views/Profesionales/Profesionales.js";
+import Profesional from "views/Profesional/Profesional.js"
+>>>>>>> 42a0779019e5ed45eaba73afead6b185520d0268
 
 // core components/views for RTL layout
 
@@ -80,11 +84,18 @@ const dashboardRoutes = [{
         layout: "/admin",
     },
     {
-        path: "/typography",
-        name: "Typography",
-        icon: LibraryBooks,
-        component: Typography,
-        layout: "/admin",
+      path: "/profesional",
+      name: "Registrar profesional",
+      icon: Person,
+      component: Profesional,
+      layout: "/admin",
+    },
+    {
+      path: "/Profesionales",
+      name: "Profesionales",
+      icon: LibraryBooks,
+      component: Profesionales,
+      layout: "/admin",
     },
     {
         path: "/icons",
